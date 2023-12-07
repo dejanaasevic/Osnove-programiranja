@@ -1,0 +1,20 @@
+1234|A|18:00|20:00|Monday, Wednesday|Avengers: Endgame|450.00
+5678|B|17:30|19:30|Tuesday, Thursday|Black Widow|430.00
+9101|C|19:00|21:00|Friday|Thor: Ragnarok|420.00
+1121|D|20:30|22:30|Saturday|Black Panther|400.00
+3141|A|15:00|17:00|Sunday|Iron Man|380.00
+5161|B|14:30|16:30|Monday, Wednesday|Spider-Man: Far From Home|470.00
+7181|C|20:00|22:00|Thursday|Captain America: Civil War|410.00
+9201|D|21:30|23:30|Friday|Iron Man 2|390.00
+1222|A|19:45|21:45|Saturday|Thor: Ragnarok|430.00
+3242|B|16:15|18:15|Sunday|Black Widow|440.00
+5262|C|13:00|15:00|Tuesday|The Avengers|460.00
+7282|D|17:45|19:45|Wednesday|Iron Man|410.00
+9302|A|20:15|22:15|Thursday|Thor: Ragnarok|420.00
+1343|B|19:30|21:30|Saturday|Spider-Man: Far From Home|450.00
+5363|C|14:45|16:45|Sunday|Captain America: The Winter Soldier|400.00
+7383|D|17:00|19:00|Tuesday|Black Panther|440.00
+9403|A|19:45|21:45|Thursday|Iron Man 2|410.00
+1454|B|20:30|22:30|Friday|Black Widow|430.00
+3474|C|16:45|18:45|Saturday|Captain America: Civil War|460.00
+5494|D|15:00|17:00|Sunday|The Avengers|480.00
