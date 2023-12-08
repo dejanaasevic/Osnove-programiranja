@@ -1,6 +1,8 @@
 from datetime import datetime
 from MovieProjection import MovieProjection
 from MovieProjectionTerm import MovieProjectionTerm
+from MovieProjectionController import MovieProjectionController
+from CinemaHallController import CinemaHallController
 
 
 def save_projection(movie_projection_term):
@@ -32,21 +34,18 @@ def add_movie_projection_term(projection, index, date):
         return None
 
 
-def load_projections():
-    list_of_projections = []
-    with open('projections.txt', 'r') as file:
-        for line in file:
-            new_projection = line.strip().split('|')
-            list_of_projections.append(MovieProjection(*new_projection))
-
-        return list_of_projections
+projection_controller = MovieProjectionController()
+projection_controller.load_projections()
+list_of_projections = projection_controller.list_of_projections
+cinema_controller = CinemaHallController()
+cinema_controller.load_cinema_halls()
+list_of_halls = cinema_controller.list_of_cinema_halls
 
 
 class MovieProjectionTermController:
 
     def __init__(self):
         self.list_of_projection_terms = []
-        self.list_of_projections = load_projections()
 
     def load_projection_terms(self):
         with open('projectionterms.txt', 'r') as file:
@@ -56,10 +55,10 @@ class MovieProjectionTermController:
                 code = movie_projection_terms_items[0]
                 date = movie_projection_terms_items[1]
                 date_object = datetime.strptime(date, '%d.%m.%Y.')
-                for i in range(len(self.list_of_projections)):
-                    if self.list_of_projections[i].projection_code == code[0:4]:
-                        if valid_date(self.list_of_projections[i], date_object):
-                            self.list_of_projection_terms.append(MovieProjectionTerm(self.list_of_projections[i],
+                for i in range(len(list_of_projections)):
+                    if list_of_projections[i].projection_code == code[0:4]:
+                        if valid_date(list_of_projections[i], date_object):
+                            self.list_of_projection_terms.append(MovieProjectionTerm(list_of_projections[i],
                                                                                      i, date_object))
 
     def search(self, criterion):

@@ -619,7 +619,7 @@ def search_movie_projection_terms():
             criteria.title = input("Unesite naziv filma: ")
 
         elif choice == "2":
-            criteria.hall = input("Unesite oznaku sale: ")
+            criteria.hall_code = input("Unesite oznaku sale: ")
 
         elif choice == "3":
             criteria.date = input("Unesite datum projekcije: ")
@@ -711,12 +711,13 @@ if __name__ == '__main__':
     user_controller.load_users()
     movie_controller = MovieController()
     movie_controller.load_movies()
-
     movie_projection_controller = MovieProjectionController()
     movie_projection_controller.load_projections()
 
     movie_projection_term_controller = MovieProjectionTermController()
     movie_projection_term_controller.load_projection_terms()
+    #a = movie_projection_term_controller.list_of_projection_terms
+    #display_projection_terms_list(a)
     main()
 
 

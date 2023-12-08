@@ -9,6 +9,6 @@ class MovieProjection:
         self.ticket_price = ticket_price
 
     def display_movie_projection(self):
-        print(f"Projection Code: {self.projection_code}\nHall: {self.hall}\nStart Time: {self.start_time}\n"
+        print(f"Projection Code: {self.projection_code}\nHall: {self.hall.hall_code}\nStart Time: {self.start_time}\n"
               f"End Time: {self.end_time}\nProjection Days: {self.projection_days}\nMovie: {self.movie}\n"
               f"Ticket Price: {self.ticket_price}")

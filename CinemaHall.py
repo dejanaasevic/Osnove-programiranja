@@ -34,3 +34,13 @@ class CinemaHall:
                 return True
         return False
 
+    def display_seating_plan(self):
+        for row_number in self.seating_plan:
+            row_display = "Row " + row_number + ": "
+            for seat_label in self.seat_labels:
+                if self.seating_plan[row_number][seat_label]:
+                    row_display += "X "
+                else:
+                    row_display += seat_label + " "
+            print(row_display.strip())
+

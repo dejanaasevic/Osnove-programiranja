@@ -1,10 +1,9 @@
 from datetime import datetime
 
-
 class Ticket:
-    def __init__(self, owner, projection, seat_label, status):
+    def __init__(self, owner, projection_term, seat_label, status):
         self.owner = owner
-        self.projection = projection
+        self.projection_term = projection_term
         self.seat_label = seat_label
         self.date = datetime.now()
         self.status = status

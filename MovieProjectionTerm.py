@@ -25,7 +25,7 @@ class MovieProjectionTerm:
     def display_movie_projection_term(self):
         formatted_date = self.date.strftime('%d.%m.%Y.')
         movie_projection_term_info = (f"Title: {self.movie_projection.movie}\n"
-                                      f"Hall:{self.movie_projection.hall}\n"
+                                      f"Hall:{self.movie_projection.hall.hall_code}\n"
                                       f"Date:{formatted_date}\nStart time:{self.movie_projection.start_time}\n"
                                       f"End time:{self.movie_projection.end_time}\n")
 

@@ -2,9 +2,9 @@ from datetime import datetime
 
 
 class MovieProjectionTermCriterion:
-    def __init__(self, title=None, hall=None, date=None, start_time=None, end_time=None):
+    def __init__(self, title=None, hall_code=None, date=None, start_time=None, end_time=None):
         self.title = title
-        self.hall = hall
+        self.hall_code = hall_code
         self.date = date
         self.start_time = start_time
         self.end_time = end_time
@@ -13,8 +13,7 @@ class MovieProjectionTermCriterion:
         if (self.title is not None and self.title.lower().strip() not in
                 projection_term.movie_projection.movie.lower().strip()):
             return False
-        if (self.hall is not None and self.hall.lower().strip() not in
-                projection_term.movie_projection.hall.lower().strip()):
+        if self.hall_code is not None and self.hall_code != projection_term.movie_projection.hall.hall_code:
             return False
 
         if self.date is not None:
