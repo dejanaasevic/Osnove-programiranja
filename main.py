@@ -1,4 +1,8 @@
+from datetime import date
+from MovieProjection import MovieProjection
+from MovieProjectionTerm import MovieProjectionTerm
 from MovieProjectionTermController import MovieProjectionTermController
+from Ticket import Ticket
 from User import User
 from Movie import Movie
 from UserController import UserController
@@ -6,6 +10,7 @@ from MovieController import MovieController
 from MovieProjectionController import MovieProjectionController
 from MovieCriterion import MovieCriterion
 from MovieProjectionTermCriterion import MovieProjectionTermCriterion
+from TicketController import TicketController
 from CinemaHall import CinemaHall
 from CinemaHallController import CinemaHallController
 
@@ -54,6 +59,8 @@ def display_menu_for_registered_customer():
         print("5. Pretraga filmova")
         print("6. Visestruka pretraga filmova")
         print("7. Pretraga termina bioskopskih projekcija")
+        print("8. Rezervacija karte")
+        print("9.Pregled rezervisanih karata")
         choice = input("Unesite broj opcije: ")
         if choice == "1":
             log_out()
@@ -69,6 +76,10 @@ def display_menu_for_registered_customer():
             multi_search_movies()
         elif choice == "7":
             search_movie_projection_terms()
+        elif choice == "8":
+            reserve_ticket()
+        elif choice == "9":
+            display_reserved_tickets_for_user()
         else:
             print("Nevažeća opcija. Molimo pokušajte ponovo.")
 
@@ -635,6 +646,7 @@ def search_movie_projection_terms():
 
     list = movie_projection_term_controller.search(criteria)
     display_projection_terms_list(list)
+    return list
 
 
 def display_list(list):
@@ -658,6 +670,7 @@ def display_projection_terms_list(list):
             projection_term.display_movie_projection_term()
             i += 1
 
+
 def display_projection_(list):
     if not list:
         print("Nema ponudjenih termina projekcija")
@@ -667,6 +680,97 @@ def display_projection_(list):
             print(f"PROJEKCIJa {i}")
             projection_term.display_movie_projection()
             i += 1
+
+
+def reserve_ticket():
+    projection_term = None
+    seat_choice = None
+    reserve_seats = False
+
+    while True:
+        print("REZERVACIJA KARATA")
+        print("__________________")
+        print("Odabir željenog termina projekcije")
+        print("1.Pretraga termina projekcije")
+        print("2. Direktan unos sifre")
+        print("Za povratak na meni unesite: -1")
+        print("")
+        choice = input("Unesite broj opcije: ")
+        if choice == "-1":
+            display_user_menu()
+        if choice == "1":
+            list_of_projection_terms = search_movie_projection_terms()
+            projection_term_choice = int(input("Unesi broj izabrane projekcije: "))
+            projection_term = list_of_projection_terms[projection_term_choice - 1]
+        if choice == "2":
+            projection_term_code = input("Unesi sifru projekcije: ")
+            list_projection_terms = movie_projection_term_controller.list_of_projection_terms
+            for term in list_projection_terms:
+                if term.code.lower() == projection_term_code.strip().lower():
+                    projection_term = term
+
+        list_of_tickets = ticket_controller.list_of_tickets
+        taken_seats_labels = []
+        for ticket in list_of_tickets:
+            if ticket.projection_term.code.lower() == projection_term.code.lower():
+                taken_seats_labels.append(ticket.seat_label)
+
+        list_of_halls = cinema_hall_controller.list_of_cinema_halls
+        hall = None
+        for hall_item in list_of_halls:
+            if hall_item.hall_code == projection_term.movie_projection.hall.hall_code:
+                hall = hall_item
+        if not reserve_seats:
+            for label in taken_seats_labels:
+                row = label[0]
+                seat = label[1]
+                hall.reserve_seat(row, seat)
+                reserve_seats = True
+        hall.display_seating_plan()
+
+        while True:
+            seat_choice = input("Unesite oznaku slobodnog sedista (prvo se unosi broj reda pa oznaka sedista: ")
+            if choice == "-1":
+                display_user_menu()
+                break
+            else:
+                seat_taken = False
+                for label in taken_seats_labels:
+                    if label == seat_choice:
+                        seat_taken = True
+                        break
+
+                if not seat_taken:
+                    row = seat_choice[0]
+                    seat = seat_choice[1]
+                    if hall.reserve_seat(row, seat):
+                        new_ticket = Ticket(current_user.username, projection_term, seat_choice, 1)
+                        ticket_controller.add_ticket(new_ticket)
+                        break
+                    else:
+                        print("Neispravno oznaceno sediste ili red.")
+
+
+def display_reserved_tickets_for_user():
+    username = current_user.username
+    user_reserved_card = []
+    for ticket in ticket_controller.list_of_tickets:
+        if ticket.owner == username:
+            user_reserved_card.append(ticket)
+
+    if not user_reserved_card:
+        print("Nema rezervisanih karti")
+    else:
+        i = 1
+        for ticket in user_reserved_card:
+            print(f"REZERVACIJA {i}")
+            print(f"Projection term code: {ticket.projection_term.code}\n"
+                  f"Movie:{ticket.projection_term.movie_projection.movie}\n"
+                  f"Date:{ticket.projection_term.date.strftime('%d.%m.%Y.')}\n"
+                  f"Start time: {ticket.projection_term.movie_projection.start_time}\n"
+                  f"End time: {ticket.projection_term.movie_projection.end_time}\n"
+                  f"Seat label: {ticket.seat_label}\n")
+
 
 def main():
     while True:
@@ -691,7 +795,13 @@ def main():
 
 def save_cinema_hall(cinema_hall):
     with open('cinemahalls.txt', 'a') as file:
-        file.write(f"{cinema_hall.hall_code}|{cinema_hall.num_rows}|{cinema_hall.seat_labels}|{cinema_hall.hall_name}\n")
+        file.write(
+            f"{cinema_hall.hall_code}|{cinema_hall.num_rows}|{cinema_hall.seat_labels}|{cinema_hall.hall_name}\n")
+
+
+def save_ticket(ticket):
+    with open('tickets.txt', 'a') as file:
+        file.write(f"{ticket.owner}|{ticket.projection_term.code}|{ticket.seat_label}|{ticket.date}|{ticket.status}\n")
 
 
 def display_projection(a):
@@ -716,8 +826,14 @@ if __name__ == '__main__':
 
     movie_projection_term_controller = MovieProjectionTermController()
     movie_projection_term_controller.load_projection_terms()
-    #a = movie_projection_term_controller.list_of_projection_terms
-    #display_projection_terms_list(a)
+    ticket_controller = TicketController()
+    ticket_controller.load_tickets()
+    cinema_hall_controller = CinemaHallController()
+    cinema_hall_controller.load_cinema_halls()
+    # list_projection_terms = movie_projection_term_controller.list_of_projection_terms
+    # display_projection_terms_list(a)
+    # projection2 = MovieProjection("5678", "Hall B", "17:30", "19:30", "Tuesday, Thursday", "Black Widow", "430.00")
+    # projection_Term2 = MovieProjectionTerm(projection2, 1, date(2023, 12, 14))
+    # ticket1 = Ticket("dejanaasevic", projection_Term2, "1A", 1)
+    # save_ticket(ticket1)
     main()
-
-

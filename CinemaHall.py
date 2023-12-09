@@ -13,7 +13,7 @@ class CinemaHall:
             seats = {}
             for seat_label in self.seat_labels:
                 seats[seat_label] = False
-                rows[row_label] = seats
+            rows[row_label] = seats
         return rows
 
     def get_total_seats(self):
@@ -27,11 +27,26 @@ class CinemaHall:
                     available_seats.append("Row: " + row_number + " , Seat: " + seat_label)
         return available_seats
 
-    def reserve_seat(self, row, seat):
+    def reserve_seat1(self, row, seat):
         if row in self.seating_plan and seat in self.seating_plan[row]:
             if not self.seating_plan[row][seat]:
                 self.seating_plan[row][seat] = True
                 return True
+        return False
+
+    def reserve_seat(self, row, seat):
+
+        if row in self.seating_plan and seat in self.seating_plan[row]:
+            if not self.seating_plan[row][seat]:
+                self.seating_plan[row][seat] = True
+                return True
+
+
+            else:
+                print("Sediste je vec zauzeto.")
+                return False
+        else:
+            print("Neispravno oznaceno sediste ili red.")
         return False
 
     def display_seating_plan(self):
@@ -43,4 +58,9 @@ class CinemaHall:
                 else:
                     row_display += seat_label + " "
             print(row_display.strip())
+
+
+
+
+
 
