@@ -4,8 +4,8 @@ from MovieCriterion import MovieCriterion
 
 def save_movie(movie):
     with open('movies.txt', 'a') as file:
-        file.write(f"{movie.title},{movie.genre},{movie.duration},{movie.main_roles},{movie.country_of_origin},"
-                   f"{movie.release_year},{movie.description}")
+        file.write(f"{movie.title}|{movie.genre}|{movie.duration}|{movie.director}|{movie.main_roles}|"
+                   f"{movie.country_of_origin}|"f"{movie.release_year}|{movie.description}\n")
 
 
 class MovieController:
@@ -15,8 +15,18 @@ class MovieController:
     def load_movies(self):
         with open('movies.txt', 'r') as file:
             for line in file:
-                new_movie = line.strip().split(',')
+                new_movie = line.strip().split('|')
                 self.list_of_movies.append(Movie(*new_movie))
+
+    def add_movie(self, movie):
+        if isinstance(movie, Movie):
+            self.list_of_movies.append(movie)
+            save_movie(movie)
+            return True
+        else:
+            if not isinstance(movie, Movie):
+                print("Prosleđen objekat nije tipa Movie")
+                return False
 
     def search(self, criterion):
         filtered_movies = []

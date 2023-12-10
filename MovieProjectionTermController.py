@@ -11,29 +11,6 @@ def save_projection(movie_projection_term):
         file.write(projection_term_info)
 
 
-def get_day_of_week(date_item):
-    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    day_of_week = date_item.weekday()
-    return days_of_week[day_of_week]
-
-
-def valid_date(projection, date):
-    day_of_week = get_day_of_week(date)
-    projection_days = projection.projection_days.split(', ')
-    for day in projection_days:
-        if day == day_of_week:
-            return True
-    return False
-
-
-def add_movie_projection_term(projection, index, date):
-    if valid_date(projection, date):
-        return MovieProjectionTerm(projection, index, date)
-    else:
-        print("Neodgovarajuci datum")
-        return None
-
-
 projection_controller = MovieProjectionController()
 projection_controller.load_projections()
 list_of_projections = projection_controller.list_of_projections
@@ -57,7 +34,7 @@ class MovieProjectionTermController:
                 date_object = datetime.strptime(date, '%d.%m.%Y.')
                 for i in range(len(list_of_projections)):
                     if list_of_projections[i].projection_code == code[0:4]:
-                        if valid_date(list_of_projections[i], date_object):
+                        if self.valid_date(list_of_projections[i], date_object):
                             self.list_of_projection_terms.append(MovieProjectionTerm(list_of_projections[i],
                                                                                      i, date_object))
 
@@ -70,3 +47,38 @@ class MovieProjectionTermController:
             return None
         else:
             return filtered_movies_projection_terms
+
+    def unique_code(self, projection_term_code):
+        for term in self.list_of_projection_terms:
+            if projection_term_code == term.code:
+                return False
+        return True
+
+    def add_projection_term(self, projection_term):
+        if isinstance(projection_term, MovieProjectionTerm):
+            if not self.unique_code(projection_term.code):
+                print("Termin projekcije vec postoji. Molimo pokusajte ponovo.")
+                return False
+            if self.unique_code(projection_term.code):
+                self.list_of_projection_terms.append(projection_term)
+                save_projection(projection_term)
+            return True
+        else:
+            if not isinstance(projection_term, MovieProjectionTerm):
+                print("Prosleđen objekat nije tipa MovieProjectionTerm")
+                return False
+
+    @staticmethod
+    def get_day_of_week(date_item):
+        days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        day_of_week = date_item.weekday()
+        return days_of_week[day_of_week]
+
+    @staticmethod
+    def valid_date(projection, date_object):
+        day_of_week = MovieProjectionTermController.get_day_of_week(date_object)
+        projection_days = projection.projection_days.split(', ')
+        for day in projection_days:
+            if day == day_of_week:
+                return True
+        return False

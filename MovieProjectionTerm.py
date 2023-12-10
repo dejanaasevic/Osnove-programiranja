@@ -1,3 +1,6 @@
+import re
+
+
 class MovieProjectionTerm:
     def __init__(self, movie_projection, index, date):
         self.index = index
@@ -30,3 +33,17 @@ class MovieProjectionTerm:
                                       f"End time:{self.movie_projection.end_time}\n")
 
         print(movie_projection_term_info)
+
+
+
+    @staticmethod
+    def valid_date_format(date_string):
+        pattern = r"^\d{1,2}\.\d{1,2}\.\d{4}\."
+        return bool(re.match(pattern, date_string))
+
+    @staticmethod
+    def valid_code(code):
+        pattern = r"^\d{4}[A-Z]{2}\|\d{1,2}\.\d{1,2}\.\d{4}\.$"
+        return bool(re.match(pattern, code))
+
+

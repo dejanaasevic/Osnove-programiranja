@@ -24,28 +24,29 @@ class Movie:
 
     @staticmethod
     def valid_genre(genre_name):
-        if genre_name.isspace():
-            return False
-        else:
-            genres = [
-                "action", "adventure", "animation", "comedy", "crime", "documentary",
-                "drama", "fantasy", "horror", "mystery", "romance", "sci-fi",
-                "thriller", "western", "war", "biography", "music", "sports",
-                "superhero", "family", "teenage"
-            ]
-            for genre in genres:
-                if genre_name.lower() == genre:
-                    return True
+        genres = [
+            "action", "adventure", "animation", "comedy", "crime", "documentary",
+            "drama", "fantasy", "horror", "mystery", "romance", "sci-fi",
+            "thriller", "western", "war", "biography", "music", "sports",
+            "superhero", "family", "teenage"
+        ]
 
-        return False
+        genre_name_array = genre_name.lower().split()
+
+        for genre_info in genre_name_array:
+            if genre_info not in genres:
+                return False
+
+        return True
+
     @staticmethod
     def valid_duration(movie_duration):
         try:
             movie_duration = int(movie_duration)
             if movie_duration > 30:
-                return  True
+                return True
             else:
-                return  False
+                return False
 
         except ValueError:
             return False
@@ -59,8 +60,17 @@ class Movie:
             return False
 
     @staticmethod
+    def valid_main_roles(main_roles):
+        pattern = r'^[A-Z][a-zA-Z]*(?:[\s,]+[A-Z][a-zA-Z]*)*$'
+        return bool(re.match(pattern, main_roles))
+
+    @staticmethod
     def valid_country_name(country_name):
-        return not country_name.isspace()
+        pattern = r'^[A-Z][a-zA-Z]{1,}$'
+        if re.match(pattern, country_name) and len(country_name) >= 2:
+            return True
+        else:
+            return False
 
     @staticmethod
     def valid_year(year):

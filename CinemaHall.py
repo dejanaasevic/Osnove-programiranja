@@ -1,9 +1,13 @@
+import re
+
+
 class CinemaHall:
     def __init__(self, hall_code, num_rows, seat_labels, hall_name=None):
         self.hall_code = hall_code
         self.hall_name = hall_name
         self.num_rows = int(num_rows)
-        self.seat_labels = seat_labels.strip().split(',')
+        self.seat_labels = seat_labels
+        self.seat_labels_array = seat_labels.strip().split(',')
         self.seating_plan = self.generate_seating_plan()
 
     def generate_seating_plan(self):
@@ -11,18 +15,18 @@ class CinemaHall:
         for row_number in range(1, self.num_rows + 1):
             row_label = str(row_number)
             seats = {}
-            for seat_label in self.seat_labels:
+            for seat_label in self.seat_labels_array:
                 seats[seat_label] = False
             rows[row_label] = seats
         return rows
 
     def get_total_seats(self):
-        return self.num_rows * len(self.seat_labels)
+        return self.num_rows * len(self.seat_labels_array)
 
     def get_available_seats(self):
         available_seats = []
         for row_number in self.seating_plan:
-            for seat_label in self.seat_labels:
+            for seat_label in self.seat_labels_array:
                 if not self.seating_plan[row_number][seat_label]:
                     available_seats.append("Row: " + row_number + " , Seat: " + seat_label)
         return available_seats
@@ -40,8 +44,6 @@ class CinemaHall:
             if not self.seating_plan[row][seat]:
                 self.seating_plan[row][seat] = True
                 return True
-
-
             else:
                 print("Sediste je vec zauzeto.")
                 return False
@@ -52,15 +54,33 @@ class CinemaHall:
     def display_seating_plan(self):
         for row_number in self.seating_plan:
             row_display = "Row " + row_number + ": "
-            for seat_label in self.seat_labels:
+            for seat_label in self.seat_labels_array:
                 if self.seating_plan[row_number][seat_label]:
                     row_display += "X "
                 else:
                     row_display += seat_label + " "
             print(row_display.strip())
 
+    @staticmethod
+    def valid_hall_code(hall_code):
+        return len(hall_code) == 1 and hall_code.isalpha() and hall_code.isupper()
 
+    @staticmethod
+    def valid_seat_label(seat_label):
+        pattern = r'^\d+[A-Z]$'
+        return bool(re.match(pattern, seat_label))
 
+    @staticmethod
+    def valid_seat_labels(seat_labels):
+        pattern = r"^[A-Z](,[A-Z])*$"
+        return bool(re.match(pattern, seat_labels))
 
+    @staticmethod
+    def valid_cinema_hall_name(cinema_hall_name):
+        pattern = r"^[A-Z][a-zA-Z0-9\s]*$"
+        return bool(re.match(pattern, cinema_hall_name))
 
-
+    @staticmethod
+    def valid_num_rows(num_rows):
+        pattern = r"^[1-9]\d*$"
+        return bool(re.match(pattern, num_rows))

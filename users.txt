@@ -2,3 +2,6 @@ dejanaasevic,deynass24,Dejana,Sevic,3
 zeljanaasevic,zeljanas8,Zeljana,Sevic,2
 nikolijabozic,nikica21,Nikolija,Bozic,1
 stasazdravkovic,stasa123,Stasa,Zdravkovic,1
+admin,admin01,Admin,Admin,0
+anaparoski,ana1234,Ana,Paroski,3
+sofijazoric,sofi123,Sofija,Zoric,2
