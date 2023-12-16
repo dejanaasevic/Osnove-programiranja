@@ -77,7 +77,7 @@ class MovieProjectionTermController:
     @staticmethod
     def valid_date(projection, date_object):
         day_of_week = MovieProjectionTermController.get_day_of_week(date_object)
-        projection_days = projection.projection_days.split(', ')
+        projection_days = projection.projection_days.split(',')
         for day in projection_days:
             if day == day_of_week:
                 return True

@@ -2,7 +2,6 @@ from MovieProjection import MovieProjection
 from CinemaHallController import CinemaHallController
 
 
-# radila u verziji gde je parametar hall predstavljao oznaku a ne objekat
 def save_projection(movie_projection):
     with open('projections.txt', 'a') as file:
         projection_info = (f"{movie_projection.projection_code}|{movie_projection.hall.hall_code}"
