@@ -1,4 +1,6 @@
+import re
 from datetime import datetime
+
 
 class Ticket:
     def __init__(self, owner, projection_term, seat_label, status):
@@ -16,3 +18,8 @@ class Ticket:
 
     def update_seat_label(self, new_seat_label):
         self.seat_label = new_seat_label
+
+    @staticmethod
+    def valid_name(name):
+        pattern = r'^[A-Z][a-zA-Z]*(?:[\s,]+[A-Z][a-zA-Z]*)*$'
+        return bool(re.match(pattern, name))

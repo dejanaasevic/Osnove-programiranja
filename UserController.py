@@ -58,7 +58,7 @@ class UserController:
         for user in self.list_of_users:
             if user.username == username:
                 return user
-        return False
+        return None
 
     def update_user_in_list(self, updated_user):
         for user in self.list_of_users:

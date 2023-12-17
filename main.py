@@ -101,6 +101,7 @@ def display_menu_for_registered_salesperson():
         print("5. Pretraga filmova")
         print("6. Višestruka pretraga filmova")
         print("7. Pretraga termina bioskopskih projekcija")
+        print("8. Rezervacija karte")
         choice = input("Unesite broj opcije: ")
         if choice == "1":
             log_out()
@@ -116,6 +117,8 @@ def display_menu_for_registered_salesperson():
             multi_search_movies()
         elif choice == "7":
             search_movie_projection_terms()
+        elif choice == "8":
+            reserve_tickets_for_salesperson()
         else:
             print("Nevažeća opcija. Molimo pokušajte ponovo.")
 
@@ -1149,7 +1152,7 @@ def reserve_ticket():
             projection_term_choice = int(input("Unesi broj izabrane projekcije: "))
             if projection_term_choice == -1:
                 continue
-            elif 0 <= projection_term_choice < len(list_of_projection_terms):
+            elif not 0 < projection_term_choice <= len(list_of_projection_terms):
                 print("Nevažeći indeks. Molimo pokušajte ponovo.")
             else:
                 projection_term = list_of_projection_terms[projection_term_choice - 1]
@@ -1166,6 +1169,7 @@ def reserve_ticket():
                 for term in list_projection_terms:
                     if term.code.lower() == projection_term_code.strip().lower():
                         projection_term = term
+
 
         list_of_tickets = ticket_controller.list_of_tickets
         taken_seats_labels = []
@@ -1187,32 +1191,130 @@ def reserve_ticket():
 
         hall.display_seating_plan()
 
-        while True:
-            seat_choice = input("Unesite oznaku slobodnog sedista (prvo se unosi broj reda pa oznaka sedista: ")
-            if choice == "-1":
-                reserve_ticket()
-                return
-            elif not CinemaHall.valid_seat_label(seat_choice):
+        seat_choice = input("Unesite oznaku slobodnog sedista (prvo se unosi broj reda pa oznaka sedista: ")
+        if choice == "-1":
+            continue
+        elif not CinemaHall.valid_seat_label(seat_choice):
+            continue
+        else:
+            seat_taken = False
+            for label in taken_seats_labels:
+                if label == seat_choice:
+                    seat_taken = True
+                    break
+            if not seat_taken:
+                row = seat_choice[0]
+                seat = seat_choice[1]
+                if hall.reserve_seat(row, seat):
+                    new_ticket = Ticket(current_user.username, projection_term, seat_choice, 1)
+                    if ticket_controller.add_ticket(new_ticket):
+                        print("Uspešno ste rezervisali kartu")
+                    else:
+                        print("Rezervacija nije uspela. Molimo pokušajte ponovo.")
+            else:
+                continue
+
+def reserve_tickets_for_salesperson():
+    projection_term = None
+    seat_choice = None
+    reserve_seats = False
+    hall = None
+    user = None
+    while True:
+        print("REZERVACIJA KARATA ZA PRODAVCA")
+        print("__________________")
+        print("Odabir željenog termina projekcije")
+        print("1.Pretraga termina projekcije")
+        print("2. Direktan unos šifre")
+        print("Za povratak na meni unesite: -1")
+        choice = input("Unesite broj opcije: ")
+        if choice == "-1":
+            display_user_menu()
+
+        if choice == "1":
+            list_of_projection_terms = search_movie_projection_terms()
+            projection_term_choice = int(input("Unesi broj izabrane projekcije: "))
+            if projection_term_choice == -1:
+                continue
+            elif not 0 < projection_term_choice <= len(list_of_projection_terms):
+                print("Nevažeći indeks. Molimo pokušajte ponovo.")
                 continue
             else:
-                seat_taken = False
-                for label in taken_seats_labels:
-                    if label == seat_choice:
-                        seat_taken = True
-                        break
-                if not seat_taken:
-                    row = seat_choice[0]
-                    seat = seat_choice[1]
-                    if hall.reserve_seat(row, seat):
-                        new_ticket = Ticket(current_user.username, projection_term, seat_choice, 1)
-                        if ticket_controller.add_ticket(new_ticket):
-                            print("Uspešno ste rezervisali kartu")
-                            display_user_menu()
-                            break
-                        else:
-                            print("Rezervacija nije uspela. Molimo pokušajte ponovo.")
+                projection_term = list_of_projection_terms[projection_term_choice - 1]
+
+        if choice == "2":
+            projection_term_code = input("Unesi sifru projekcije: ")
+            if projection_term_code == "-1":
+                continue
+            elif not MovieProjectionTerm.valid_code(projection_term_code):
+                print("Nevažeći kod. Molimo pokušajte ponovo")
+                continue
+            else:
+                list_projection_terms = movie_projection_term_controller.list_of_projection_terms
+                for term in list_projection_terms:
+                    if term.code.lower() == projection_term_code.strip().lower():
+                        projection_term = term
+
+        name = input("Unesite ime i prezime za neregistrovanog korisnika"
+                     " ili username za registrovanog korisnika (username mora da počne sa @)")
+        if name == "-1":
+            continue
+        elif name.startswith('@'):
+            username = user_controller.get_user(name[1:])
+            if username is None:
+                print("Korisničko ime ne postoji. Molimo pokušajte ponovo")
+                continue
+            else:
+                user = name[1:]
+        else:
+            if not Ticket.valid_name(name):
+                print("Nevažeće ime. Molimo pokušajte kasnije.")
+                continue
+            else:
+                user = name
+
+        list_of_tickets = ticket_controller.list_of_tickets
+        taken_seats_labels = []
+        for ticket in list_of_tickets:
+            if ticket.projection_term.code.lower() == projection_term.code.lower():
+                taken_seats_labels.append(ticket.seat_label)
+
+        list_of_halls = cinema_hall_controller.list_of_cinema_halls
+        for hall_item in list_of_halls:
+            if hall_item.hall_code == projection_term.movie_projection.hall.hall_code:
+                hall = hall_item
+
+        if not reserve_seats:
+            for label in taken_seats_labels:
+                row = label[0]
+                seat = label[1]
+                hall.reserve_seat(row, seat)
+                reserve_seats = True
+
+        hall.display_seating_plan()
+
+        seat_choice = input("Unesite oznaku slobodnog sedista (prvo se unosi broj reda pa oznaka sedista: ")
+        if choice == "-1":
+            continue
+        elif not CinemaHall.valid_seat_label(seat_choice):
+            continue
+        else:
+            seat_taken = False
+            for label in taken_seats_labels:
+                if label == seat_choice:
+                    seat_taken = True
+                    break
+            if not seat_taken:
+                row = seat_choice[0]
+                seat = seat_choice[1]
+                if hall.reserve_seat(row, seat):
+                    new_ticket = Ticket(user, projection_term, seat_choice, 1)
+                    if ticket_controller.add_ticket(new_ticket):
+                        print("Uspešno ste rezervisali kartu")
                     else:
-                        continue
+                        print("Rezervacija nije uspela. Molimo pokušajte ponovo.")
+            else:
+                continue
 
 
 def cancellation_of_ticket_reservation():
@@ -1234,17 +1336,13 @@ def cancellation_of_ticket_reservation():
                 print("Nevažeći indeks. Molimo pokušajte ponovo")
                 continue
             else:
-                ticket = user_reserved_card[int(choice)-1]
+                ticket = user_reserved_card[int(choice) - 1]
                 if ticket_controller.remove_ticket(ticket):
                     print("Uspešno ste poništili rezervaciju karte")
                     continue
                 else:
                     print("Poništavanje rezervacije nije uspelo. Molimo pokušajte ponovo.")
                     continue
-
-
-
-
 
 
 def main():
