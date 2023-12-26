@@ -1,5 +1,6 @@
 import re
 
+from tabulate import tabulate
 
 
 class MovieProjection:
@@ -12,11 +13,23 @@ class MovieProjection:
         self.movie = movie
         self.ticket_price = ticket_price
 
-    def display_movie_projection(self):
+    def display_movie_projection_staro(self):
         print(f"Projection Code: {self.projection_code}\nHall: {self.hall.hall_code}\nStart Time: {self.start_time}\n"
               f"End Time: {self.end_time}\nProjection Days: {self.projection_days}\nMovie: {self.movie}\n"
               f"Ticket Price: {self.ticket_price}")
 
+    def display_movie_projection(self):
+        movie_projection_data = [
+            ["Projection Code", self.projection_code],
+            ["Hall", self.hall.hall_code],
+            ["Start Time", self.start_time],
+            ["End Time", self.end_time],
+            ["Projection Days", self.projection_days],
+            ["Movie", self.movie],
+            ["Ticket Price", self.ticket_price]
+        ]
+        table = tabulate(movie_projection_data, headers=["Attribute", "Information"], tablefmt="grid")
+        print(table)
     @staticmethod
     def valid_time_format(time_string):
         pattern = r"^(?:[01]\d|2[0-3]):[0-5]\d$"

@@ -1,6 +1,7 @@
 from datetime import datetime
 from CinemaHall import CinemaHall
 from CinemaHallController import CinemaHallController
+from DisplayController import DisplayController
 from Movie import Movie
 from MovieController import MovieController
 from MovieCriterion import MovieCriterion
@@ -13,6 +14,7 @@ from Ticket import Ticket
 from TicketController import TicketController
 from User import User
 from UserController import UserController
+from tabulate import tabulate
 
 current_user = None
 
@@ -102,6 +104,8 @@ def display_menu_for_registered_salesperson():
         print("6. Višestruka pretraga filmova")
         print("7. Pretraga termina bioskopskih projekcija")
         print("8. Rezervacija karte")
+        print("9. Prikaži sve rezervisane karte")
+
         choice = input("Unesite broj opcije: ")
         if choice == "1":
             log_out()
@@ -119,6 +123,8 @@ def display_menu_for_registered_salesperson():
             search_movie_projection_terms()
         elif choice == "8":
             reserve_tickets_for_salesperson()
+        elif choice == "9":
+            display_reserved_tickets_for_sellperson()
         else:
             print("Nevažeća opcija. Molimo pokušajte ponovo.")
 
@@ -195,6 +201,7 @@ def display_list(list):
         for movie in list:
             print(f"FILM {i}")
             movie.display_movie()
+            print()
             i += 1
 
 
@@ -225,18 +232,14 @@ def display_projection_(list):
 def display_available_movies():
     print("PRIKAZ DOSTUPNIH FILMOVA")
     print("________________________")
-    i = 1
-    for movie in movie_controller.list_of_movies:
-        print(f"FILM {i}")
-        movie.display_movie()
-        i += 1
+    display_controller.display_movies()
 
 
 def display_reserved_tickets_for_user():
     username = current_user.username
     user_reserved_card = []
     for ticket in ticket_controller.list_of_tickets:
-        if ticket.owner == username:
+        if ticket.owner == username and ticket.status == "1":
             user_reserved_card.append(ticket)
 
     if not user_reserved_card:
@@ -254,6 +257,25 @@ def display_reserved_tickets_for_user():
                   f"Seat label: {ticket.seat_label}\n")
             i += 1
     return user_reserved_card
+
+
+def display_reserved_tickets_for_sellperson():
+    i = 1
+    for ticket in ticket_controller.list_of_tickets:
+        print(f"REZERVACIJA {i}")
+        print(f"Kod termina projekcije: {ticket.projection_term.code}\n"
+              f"Vlasnik: {ticket.owner}\n"
+              f"Film:{ticket.projection_term.movie_projection.movie}\n"
+              f"Datum:{ticket.projection_term.date}\n"
+              f"Vreme početka: {ticket.projection_term.movie_projection.start_time}\n"
+              f"Vreme kraja: {ticket.projection_term.movie_projection.end_time}\n"
+              f"Oznaka sedišta: {ticket.seat_label}\n")
+        if ticket.status == "1":
+            print(f"Status: rezervisana karta")
+        else:
+            print(f"Status: prodata karta\n")
+        i += 1
+        print()
 
 
 def login():
@@ -798,6 +820,7 @@ def multi_search_movies():
                 criteria.title = choice_title
 
         elif choice == "2":
+            display_controller.display_genres()
             choice_genre = input("Unesite žanr filma: ")
             if choice_genre == "-1":
                 continue
@@ -866,7 +889,7 @@ def multi_search_movies():
             choice_director = input("Unesite ime rezisera: ")
             if choice_director == "-1":
                 continue
-            elif not Movie.valid_person_name(choice_director):
+            elif not Movie.valid_main_roles(choice_director):
                 print("Nevažeće ime. Molimo pokušajte ponovo.")
                 continue
             else:
@@ -876,7 +899,7 @@ def multi_search_movies():
             main_roles_choice = input("Unesite glavne uloge: ")
             if main_roles_choice == "-1":
                 continue
-            if not Movie.valid_person_name(main_roles_choice):
+            if not Movie.valid_main_roles(main_roles_choice):
                 print("Nevažeće ime. Molimo pokušajte ponovo.")
                 continue
             else:
@@ -906,7 +929,7 @@ def multi_search_movies():
             continue
 
     filtered_list = movie_controller.search(criteria)
-    display_list(filtered_list)
+    display_controller.display_filtered_movies(filtered_list)
 
 
 def search_movies():
@@ -925,9 +948,13 @@ def search_movies():
         if choice == "-1":
             display_user_menu()
             return
+
         elif choice == "1":
             movie_name = input("Unesite naziv filma: ")
             if movie_name == "-1":
+                continue
+            elif movie_name.strip() == "":
+                print("Niste uneli naziv filma.")
                 continue
             elif not Movie.valid_name(movie_name):
                 print("Nevažeće ime. Molimo pokušajte ponovo.")
@@ -935,11 +962,18 @@ def search_movies():
             else:
                 name_criterion = MovieCriterion(title=movie_name)
                 filtered_list = movie_controller.search(name_criterion)
-                display_list(filtered_list)
+                if not filtered_list:
+                    print("Nema pronađenih filmova")
+                else:
+                    display_controller.display_filtered_movies(filtered_list)
 
         elif choice == "2":
+            display_controller.display_genres()
             movie_genre = input("Unesite naziv zanra: ")
             if movie_genre == "-1":
+                continue
+            elif movie_genre.strip() == "":
+                print("Niste uneli naziv zanra.")
                 continue
             elif not Movie.valid_genre(movie_genre):
                 print("Nevažeći žanr. Molimo pokušajte ponovo.")
@@ -947,19 +981,25 @@ def search_movies():
             else:
                 genre_criterion = MovieCriterion(genre=movie_genre)
                 filtered_list = movie_controller.search(genre_criterion)
-                display_list(filtered_list)
+                if not filtered_list:
+                    print("Nema pronađenih filmova")
+                else:
+                    display_controller.display_filtered_movies(filtered_list)
         elif choice == "3":
             print("Za povratak na meni unesite: -1")
             print("1.Maksimalno trajanje")
             print("2.Minimalno trajanje")
             print("3. Opseg trajanja")
             print("4. Tacno trajanje ")
-            choice = input("Izaberi opciju pretrage trajanja filma")
+            choice = input("Izaberi opciju pretrage trajanja filma: ")
             if choice == '-1':
                 continue
             elif choice == '1':
                 max_movie_duration = input("Unesite maksimalno trajanje filma u minutima: ")
                 if max_movie_duration == '-1':
+                    continue
+                elif max_movie_duration.strip() == "":
+                    print("Niste uneli trajanje.")
                     continue
                 elif not Movie.valid_duration(max_movie_duration):
                     print("Nevažeće trajanje. Molimo pokušajte ponovo.")
@@ -967,10 +1007,16 @@ def search_movies():
                 else:
                     max_movie_duration_criterion = MovieCriterion(max_duration=max_movie_duration)
                     filtered_list = movie_controller.search(max_movie_duration_criterion)
-                    display_list(filtered_list)
+                    if not filtered_list:
+                        print("Nema pronađenih filmova")
+                    else:
+                        display_controller.display_filtered_movies(filtered_list)
             elif choice == '2':
                 min_movie_duration = input("Unesite minimalno trajanje filma u minutima: ")
                 if min_movie_duration == '-1':
+                    continue
+                elif min_movie_duration.strip() == "":
+                    print("Niste uneli trajanje.")
                     continue
                 elif not Movie.valid_duration(min_movie_duration):
                     print("Nevažeće trajanje. Molimo pokušajte ponovo.")
@@ -978,12 +1024,17 @@ def search_movies():
                 else:
                     min_movie_duration_criterion = MovieCriterion(min_duration=min_movie_duration)
                     filtered_list = movie_controller.search(min_movie_duration_criterion)
-                    display_list(filtered_list)
-
+                    if not filtered_list:
+                        print("Nema pronađenih filmova")
+                    else:
+                        display_controller.display_filtered_movies(filtered_list)
             elif choice == '3':
                 max_movie_duration = input("Unesite maksimalno trajanje filma u minutima: ")
                 min_movie_duration = input("Unesite minimalno trajanje filma u minutima: ")
                 if max_movie_duration == '-1' or min_movie_duration == '-1':
+                    continue
+                elif min_movie_duration.strip() == "" or max_movie_duration.strip() == "":
+                    print("Niste uneli trajanje.")
                     continue
                 elif not (Movie.valid_duration(min_movie_duration) or Movie.valid_duration(max_movie_duration)):
                     if int(max_movie_duration) < int(min_movie_duration):
@@ -993,10 +1044,16 @@ def search_movies():
                     movie_duration_opseg_criterion = MovieCriterion(min_duration=min_movie_duration,
                                                                     max_duration=max_movie_duration)
                     filtered_list = movie_controller.search(movie_duration_opseg_criterion)
-                    display_list(filtered_list)
+                    if not filtered_list:
+                        print("Nema pronađenih filmova")
+                    else:
+                        display_controller.display_filtered_movies(filtered_list)
             elif choice == '4':
                 movie_duration = input("Unesite trajanje filma u minutima: ")
                 if movie_duration == "-1":
+                    continue
+                elif movie_duration.strip() == "":
+                    print("Niste uneli trajanje.")
                     continue
                 elif not Movie.valid_duration(movie_duration):
                     print("Nevažeće trajanje. Molimo pokušajte ponovo.")
@@ -1004,34 +1061,52 @@ def search_movies():
                 else:
                     movie_duration_criterion = MovieCriterion(duration=movie_duration)
                     filtered_list = movie_controller.search(movie_duration_criterion)
-                    display_list(filtered_list)
+                    if not filtered_list:
+                        print("Nema pronađenih filmova")
+                    else:
+                        display_controller.display_filtered_movies(filtered_list)
 
         elif choice == "4":
             movie_director = input("Unesite ime rezisera: ")
             if movie_director == "-1":
                 continue
-            elif not Movie.valid_person_name(movie_director):
+            elif movie_director.strip() == "":
+                print("Niste uneli rezisera.")
+                continue
+            elif not Movie.valid_main_roles(movie_director):
                 print("Nevažeće ime. Molimo pokušajte ponovo.")
                 continue
             else:
                 movie_director_criterion = MovieCriterion(director=movie_director)
                 filtered_list = movie_controller.search(movie_director_criterion)
-                display_list(filtered_list)
+                if not filtered_list:
+                    print("Nema pronađenih filmova")
+                else:
+                    display_controller.display_filtered_movies(filtered_list)
 
         elif choice == "5":
             movie_actor = input("Unesite ime glumca: ")
             if movie_actor == "-1":
                 continue
-            elif not Movie.valid_person_name(movie_actor):
+            elif movie_actor.strip() == "":
+                print("Niste uneli glumca.")
+                continue
+            elif not Movie.valid_main_roles(movie_actor):
                 print("Nevažeće ime. Molimo pokušajte ponovo.")
                 continue
             else:
                 movie_actor_criterion = MovieCriterion(main_roles=movie_actor)
                 filtered_list = movie_controller.search(movie_actor_criterion)
-                display_list(filtered_list)
+                if not filtered_list:
+                    print("Nema pronađenih filmova")
+                else:
+                    display_controller.display_filtered_movies(filtered_list)
         elif choice == "6":
             movie_country = input("Unesite ime drzave: ")
             if movie_country == "-1":
+                continue
+            elif movie_country.strip() == "":
+                print("Niste uneli drzavu.")
                 continue
             elif not Movie.valid_country_name(movie_country):
                 print("Nevažeće ime. Molimo pokušajte ponovo.")
@@ -1039,11 +1114,17 @@ def search_movies():
             else:
                 movie_country_criterion = MovieCriterion(country_of_origin=movie_country)
                 filtered_list = movie_controller.search(movie_country_criterion)
-                display_list(filtered_list)
+                if not filtered_list:
+                    print("Nema pronađenih filmova")
+                else:
+                    display_controller.display_filtered_movies(filtered_list)
 
         elif choice == "7":
             movie_year = input("Unesite godinu: ")
             if movie_year == "-1":
+                continue
+            elif movie_year.strip() == "":
+                print("Niste uneli godinu.")
                 continue
             elif not Movie.valid_year(movie_year):
                 print("Nevažeća godina. Molimo pokušajte ponovo.")
@@ -1051,7 +1132,10 @@ def search_movies():
             else:
                 movie_year_criterion = MovieCriterion(release_year=movie_year)
                 filtered_list = movie_controller.search(movie_year_criterion)
-                display_list(filtered_list)
+                if not filtered_list:
+                    print("Nema pronađenih filmova")
+                else:
+                    display_controller.display_filtered_movies(filtered_list)
 
 
 def search_movie_projection_terms():
@@ -1073,6 +1157,7 @@ def search_movie_projection_terms():
         if choice == "0":
             break
         elif choice == "1":
+            display_controller.display_movies_name()
             title_choice = input("Unesite naziv filma: ")
             if title_choice == "-1":
                 continue
@@ -1083,6 +1168,7 @@ def search_movie_projection_terms():
                 criteria.title = title_choice
 
         elif choice == "2":
+            display_controller.display_cinemahall_code()
             hall_code_choice = input("Unesite oznaku sale: ")
             if hall_code_choice == "-1":
                 continue
@@ -1090,7 +1176,17 @@ def search_movie_projection_terms():
                 print("Nevažeći kod. Molimo pokušajte ponovo")
                 continue
             else:
-                criteria.hall_code = hall_code_choice
+                found = False
+                list_of_halls = cinema_hall_controller.list_of_cinema_halls
+                for hall in list_of_halls:
+                    if hall.hall_code == hall_code_choice:
+                        found = True
+                        break
+                if found:
+                    criteria.hall_code = hall_code_choice
+                else:
+                    print("Nevažeći kod. Molimo pokušajte ponovo.")
+                    continue
 
         elif choice == "3":
             date_choice = input("Unesite datum projekcije: ")
@@ -1126,7 +1222,11 @@ def search_movie_projection_terms():
             continue
 
     filtered_list = movie_projection_term_controller.search(criteria)
-    display_projection_terms_list(filtered_list)
+    if not filtered_list:
+        print("Nema ponudjenih termina projekcija.")
+    else:
+        display_controller.display_filtered_projection_term(filtered_list)
+
     return filtered_list
 
 
@@ -1170,7 +1270,6 @@ def reserve_ticket():
                     if term.code.lower() == projection_term_code.strip().lower():
                         projection_term = term
 
-
         list_of_tickets = ticket_controller.list_of_tickets
         taken_seats_labels = []
         for ticket in list_of_tickets:
@@ -1213,6 +1312,7 @@ def reserve_ticket():
                         print("Rezervacija nije uspela. Molimo pokušajte ponovo.")
             else:
                 continue
+
 
 def reserve_tickets_for_salesperson():
     projection_term = None
@@ -1384,5 +1484,7 @@ if __name__ == '__main__':
 
     cinema_hall_controller = CinemaHallController()
     cinema_hall_controller.load_cinema_halls()
+
+    display_controller = DisplayController()
 
     main()

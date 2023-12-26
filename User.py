@@ -1,5 +1,7 @@
 import re
 
+from tabulate import tabulate
+
 
 class User:
     def __init__(self, username, password, name, surname, role):
@@ -37,7 +39,18 @@ class User:
         else:
             return False
 
-    def display_user(self):
+    def display_user_staro(self):
         user_info = (f"Username: {self.username}\nPassword: {self.password}\nName: {self.name}\nSurname: {self.surname}"
                      f"\nRole: {self.role}\n")
         print(user_info)
+
+    def display_user(self):
+        user_info = [
+            ["Username", self.username],
+            ["Password", self.password],
+            ["Name", self.name],
+            ["Surname", self.surname],
+            ["Role", self.role]
+        ]
+        table = tabulate(user_info, headers=["Attribute", "Information"], tablefmt="grid")
+        print(table)

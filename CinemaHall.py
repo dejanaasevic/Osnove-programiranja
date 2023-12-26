@@ -1,4 +1,5 @@
 import re
+from tabulate import tabulate
 
 
 class CinemaHall:
@@ -39,7 +40,6 @@ class CinemaHall:
         return False
 
     def reserve_seat(self, row, seat):
-
         if row in self.seating_plan and seat in self.seating_plan[row]:
             if not self.seating_plan[row][seat]:
                 self.seating_plan[row][seat] = True
@@ -60,6 +60,17 @@ class CinemaHall:
                 else:
                     row_display += seat_label + " "
             print(row_display.strip())
+
+    def display_cinema_hall(self):
+        hall_data = [
+            ["Hall Code", self.hall_code],
+            ["Hall Name", self.hall_name if self.hall_name else ""],
+            ["Number of Rows", self.num_rows],
+            ["Seat Labels", ", ".join(self.seat_labels)]
+        ]
+
+        table = tabulate(hall_data, headers=["Attribute", "Information"], tablefmt="grid")
+        print(table)
 
     @staticmethod
     def valid_hall_code(hall_code):

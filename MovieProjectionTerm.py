@@ -1,5 +1,7 @@
 import re
 
+from tabulate import tabulate
+
 
 class MovieProjectionTerm:
     def __init__(self, movie_projection, index, date):
@@ -25,7 +27,7 @@ class MovieProjectionTerm:
             second_letter = chr(65 + second_letter_index)
             return f"{first_letter}{second_letter}"
 
-    def display_movie_projection_term(self):
+    def display_movie_projection_term_staro(self):
         formatted_date = self.date.strftime('%d.%m.%Y.')
         movie_projection_term_info = (f"Title: {self.movie_projection.movie}\n"
                                       f"Hall:{self.movie_projection.hall.hall_code}\n"
@@ -34,6 +36,17 @@ class MovieProjectionTerm:
 
         print(movie_projection_term_info)
 
+    def display_movie_projection_term(self):
+        formatted_date = self.date.strftime('%d.%m.%Y.')
+        movie_projection_term_data = [
+            ["Title", self.movie_projection.movie],
+            ["Hall", self.movie_projection.hall.hall_code],
+            ["Date", formatted_date],
+            ["Start Time", self.movie_projection.start_time],
+            ["End Time", self.movie_projection.end_time]
+        ]
+        table = tabulate(movie_projection_term_data, headers=["Attribute", "Information"], tablefmt="grid")
+        print(table)
 
 
     @staticmethod

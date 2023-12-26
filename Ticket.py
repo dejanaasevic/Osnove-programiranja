@@ -1,6 +1,8 @@
 import re
 from datetime import datetime
 
+from tabulate import tabulate
+
 
 class Ticket:
     def __init__(self, owner, projection_term, seat_label, status):
@@ -18,6 +20,18 @@ class Ticket:
 
     def update_seat_label(self, new_seat_label):
         self.seat_label = new_seat_label
+
+    def display_ticket_info(self):
+        formatted_date = self.date.strftime('%d.%m.%Y.')
+        ticket_info = [
+            ["Owner", self.owner],
+            ["Projection Term", self.projection_term],
+            ["Seat Label", self.seat_label],
+            ["Date", formatted_date],
+            ["Status", self.status]
+        ]
+        table = tabulate(ticket_info, headers=["Attribute", "Information"], tablefmt="grid")
+        print(table)
 
     @staticmethod
     def valid_name(name):

@@ -1,3 +1,5 @@
+from tabulate import tabulate
+
 from Movie import Movie
 from MovieCriterion import MovieCriterion
 
@@ -6,8 +8,6 @@ def save_movie(movie):
     with open('movies.txt', 'a') as file:
         file.write(f"{movie.title}|{movie.genre}|{movie.duration}|{movie.director}|{movie.main_roles}|"
                    f"{movie.country_of_origin}|"f"{movie.release_year}|{movie.description}\n")
-
-
 class MovieController:
     def __init__(self):
         self.list_of_movies = []
@@ -37,3 +37,4 @@ class MovieController:
             return None
         else:
             return filtered_movies
+

@@ -1,4 +1,9 @@
 import re
+from tabulate import tabulate
+import textwrap
+
+
+
 
 
 class Movie:
@@ -12,11 +17,25 @@ class Movie:
         self.release_year = release_year
         self.description = description
 
-    def display_movie(self):
+    def display_movie_staro(self):
         movie_info = (f"Title: {self.title}\nGenre:{self.genre}\nDuration:{self.duration}\nDirector:{self.director}\n"
                       f"Main roles:{self.main_roles}\nCountry of origin:{self.country_of_origin}\n"
                       f"Release year:{self.release_year}\nDescription:{self.description}\n")
         print(movie_info)
+
+    def display_movie(self):
+        movie_data = [
+            ["Title", self.title],
+            ["Genre", self.genre],
+            ["Duration", self.duration],
+            ["Director", self.director],
+            ["Main roles", self.main_roles],
+            ["Country of origin", self.country_of_origin],
+            ["Release year", self.release_year],
+            ["Description", "\n".join(textwrap.wrap(self.description, width=60))]
+        ]
+        table = tabulate(movie_data, headers=["Attribute", "Information"], tablefmt="grid")
+        print(table)
 
     @staticmethod
     def valid_name(movie_name):

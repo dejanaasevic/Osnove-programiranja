@@ -20,12 +20,7 @@ class MovieCriterion:
             return False
         if self.duration is not None and int(self.duration) != int(movie.duration):
             return False
-        if self.director is not None and self.director.lower() not in movie.director.lower().strip():
-            return False
-        if self.main_roles is not None and self.main_roles.lower() not in movie.main_roles.lower().strip():
-            return False
-        if (self.country_of_origin is not None and self.country_of_origin.lower()
-                not in movie.country_of_origin.lower().strip()):
+        if self.country_of_origin is not None and self.country_of_origin.lower() not in movie.country_of_origin.lower().strip():
             return False
         if self.release_year is not None and self.release_year != movie.release_year:
             return False
@@ -36,5 +31,20 @@ class MovieCriterion:
         if self.max_duration is not None and int(movie.duration) >= int(self.max_duration):
             return False
 
-        return True
+        if self.main_roles is not None:
+            actors = [actor.strip().lower() for actor in self.main_roles.split(',')]
+            movie_actors = [m_actor.strip().lower() for m_actor in movie.main_roles.split(',')]
+            for actor in actors:
+                found = any(actor in m_actor for m_actor in movie_actors)
+                if not found:
+                    return False
 
+        if self.director is not None:
+            directors = [director.strip().lower() for director in self.director.split(',')]
+            movie_directors = [m_director.strip().lower() for m_director in movie.director.split(',')]
+            for director in directors:
+                found = any(director in m_director for m_director in movie_directors)
+                if not found:
+                    return False
+
+        return True
