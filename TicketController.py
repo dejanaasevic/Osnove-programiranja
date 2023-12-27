@@ -42,9 +42,8 @@ class TicketController:
                 ticket_code = ticket_info[1] + '|' + ticket_info[2]
                 for projection_term in list_of_projection_terms:
                     if projection_term.code == ticket_code:
-                        self.list_of_tickets.append(Ticket(ticket_info[0], projection_term,
-                                                           ticket_info[3], ticket_info[5]))
-                        list_of_projection_terms[-1].date = ticket_info[4]
+                        self.list_of_tickets.append(Ticket(ticket_info[0], projection_term, ticket_info[3],
+                                                           ticket_info[5], ticket_info[4]))
 
     def add_ticket(self, ticket):
         if isinstance(ticket, Ticket):
@@ -70,3 +69,13 @@ class TicketController:
 
                 return True
         return False
+
+    def search(self, criterion):
+        filtered_tickets = []
+        for ticket in self.list_of_tickets:
+            if criterion.valid_ticket(ticket):
+                filtered_tickets.append(ticket)
+        if not filtered_tickets:
+            return None
+        else:
+            return filtered_tickets

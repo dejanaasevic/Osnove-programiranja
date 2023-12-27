@@ -5,12 +5,16 @@ from tabulate import tabulate
 
 
 class Ticket:
-    def __init__(self, owner, projection_term, seat_label, status):
+    def __init__(self, owner, projection_term, seat_label, status, date=None):
         self.owner = owner
         self.projection_term = projection_term
         self.seat_label = seat_label
-        self.date = datetime.now()
         self.status = status
+        if date is not None:
+            self.date = datetime.strptime(date, '%d.%m.%Y.')
+        else:
+            self.date = datetime.now()
+
 
     def update_status(self, new_status):
         self.status = new_status
