@@ -31,6 +31,26 @@ def remove_ticket_from_file(ticket):
             file.write(line)
 
 
+def update_ticket_in_file(file_ticket, updated_ticket):
+    with open('tickets.txt', 'r') as file:
+        lines = file.readlines()
+
+    with open('tickets.txt', 'w') as file:
+        for line in lines:
+            ticket_info = line.strip().split('|')
+            ticket_code = ticket_info[1] + '|' + ticket_info[2]
+            if (ticket_info[0] == file_ticket.owner and ticket_code == file_ticket.projection_term.code
+                    and ticket_info[3] == file_ticket.seat_label):
+                formatted_date = updated_ticket.date.strftime('%d.%m.%Y.')
+                updated_line = "|".join([
+                    updated_ticket.owner, updated_ticket.projection_term.code,
+                    updated_ticket.seat_label, formatted_date, str(updated_ticket.status)
+                ]) + "\n"
+                file.write(updated_line)
+            else:
+                file.write(line)
+
+
 class TicketController:
     def __init__(self):
         self.list_of_tickets = []
@@ -79,3 +99,16 @@ class TicketController:
             return None
         else:
             return filtered_tickets
+
+    def sell_ticket(self, ticket_item):
+        for ticket in self.list_of_tickets:
+            if (
+                    ticket.owner == ticket_item.owner and
+                    ticket.projection_term.code == ticket_item.projection_term.code and
+                    ticket.seat_label == ticket_item.seat_label and
+                    ticket.date == ticket_item.date and
+                    ticket.status == ticket_item.status
+            ):
+                ticket.update_status(2)
+                update_ticket_in_file(ticket_item, ticket)
+

@@ -134,3 +134,4 @@ class DisplayController:
             "End time", "Seat label", "Status"
         ]
         print(tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
+

@@ -1,9 +1,11 @@
 nikolijabozic|5678AB|14.12.2023.|1A|09.12.2023.|1
 nikolijabozic|5678AB|14.12.2023.|7E|09.12.2023.|1
 nikolijabozic|9403AQ|14.12.2023.|1B|09.12.2023.|1
-stasazdravkovic|1454AR|08.12.2023.|3C|16.12.2023.|1
+stasazdravkovic|1454AR|08.12.2023.|3C|16.12.2023.|2
 anaparoski|9201AH|08.12.2023.|4D|17.12.2023.|1
 Andjela Kumazec|9302AM|14.12.2023.|2A|17.12.2023.|1
 Milica Gelic|1454AR|08.12.2023.|3B|17.12.2023.|1
 stasazdravkovic|5494AT|24.12.2023.|1A|17.12.2023.|1
-Danica Komatovic|1690AW|24.12.2023.|8C|17.12.2023.|1
+Danica Komatovic|1690AW|24.12.2023.|8C|17.12.2023.|2
+Anamarija Maksimovic|5678AB|19.12.2023.|6A|27.12.2023.|1
+Katica Bozic|1121AD|09.12.2023.|8A|27.12.2023.|2
