@@ -3,6 +3,7 @@ from tabulate import tabulate
 from CinemaHallController import CinemaHallController
 from MovieController import MovieController
 from MovieProjectionController import MovieProjectionController
+from MovieProjectionTermController import MovieProjectionTermController
 from TicketController import TicketController
 
 
@@ -19,7 +20,6 @@ class DisplayController:
         print(table)
 
     def display_filtered_projection_term(self, filtered_list):
-
         projection_term_data = []
         for term in filtered_list:
             formatted_date = term.date.strftime('%d.%m.%Y.')
@@ -135,3 +135,54 @@ class DisplayController:
         ]
         print(tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
+    def display_projection_term_codes(self):
+        projection_term_controller = MovieProjectionTermController()
+        projection_term_controller.load_projection_terms()
+        list_of_projection_terms = projection_term_controller.list_of_projection_terms
+        projection_term_code_data = []
+        i = 1
+        for term in list_of_projection_terms:
+            projection_term_code_data.append([
+                i, term.code
+            ])
+            i += 1
+        headers = ["ID", "Code term"]
+        print(tabulate(projection_term_code_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
+
+    def display_projection_term(self):
+        projection_term_controller = MovieProjectionTermController()
+        projection_term_controller.load_projection_terms()
+        list_of_projection_terms = projection_term_controller.list_of_projection_terms
+        projection_term_data = []
+        i = 1
+        for term in list_of_projection_terms:
+            formatted_date = term.date.strftime('%d.%m.%Y.')
+            projection_term_data.append([
+                i, term.code, term.movie_projection.movie, term.movie_projection.hall.hall_code, formatted_date,
+                term.movie_projection.start_time, term.movie_projection.end_time
+            ])
+            i += 1
+        headers = ["ID", "Projection term code", "Title", "Hall", "Date", "Start time", "End time"]
+        print(tabulate(projection_term_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
+
+    def display_sold_tickets_by_sale_date(self, filtered_tickets):
+        ticket_data = []
+        i = 1
+        for ticket in filtered_tickets:
+            string_projection_date = ticket.projection_term.date.strftime("%d.%m.%Y.")
+            string_ticket_date = ticket.date.strftime("%d.%m.%Y.")
+
+            i += 1
+            ticket_data.append([
+                i, ticket.projection_term.code, ticket.owner, ticket.projection_term.movie_projection.movie,
+                string_projection_date, ticket.projection_term.movie_projection.start_time,
+                ticket.projection_term.movie_projection.end_time, ticket.seat_label,
+                'rezervisana karta' if ticket.status == '1' else 'prodata karta', string_ticket_date
+            ])
+
+        headers = [
+            "ID", "Code term", "Owner", "Movie", "Projection term date", "Start time",
+            "End time", "Seat label", "Status", "Ticeket date"
+        ]
+        table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
+        return table

@@ -25,10 +25,7 @@ class TicketCriterion:
             return False
         if self.owner is not None:
             owner = self.owner.split()
-            print(owner)
             for owner_item in owner:
-                print(owner_item)
                 if owner_item not in ticket.owner:
-                    print(ticket.owner)
                     return False
         return True

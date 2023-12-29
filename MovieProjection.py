@@ -19,11 +19,13 @@ class MovieProjection:
               f"Ticket Price: {self.ticket_price}")
 
     def display_movie_projection(self):
+        start_time_str = self.start_time.strftime("%H:%M")
+        end_time_str = self.end_time.strftime("%H:%M")
         movie_projection_data = [
             ["Projection Code", self.projection_code],
             ["Hall", self.hall.hall_code],
-            ["Start Time", self.start_time],
-            ["End Time", self.end_time],
+            ["Start Time", start_time_str],
+            ["End Time", end_time_str],
             ["Projection Days", self.projection_days],
             ["Movie", self.movie],
             ["Ticket Price", self.ticket_price]
