@@ -199,6 +199,10 @@ def display_menu_for_admin():
     print("4. Registracija sale za projekcije")
     print("5. Registracija filma")
     print("6. Registracija termin bioskopske projekcije")
+    print("7. Izmena filma")
+    print("8. Brisanje filma")
+    print("9. Izmena bioskopske projekcije")
+    print("10.Brisanje bioskopske projekcije")
     choice = input("Unesi broj opcije: ")
 
     if choice == "1":
@@ -1678,13 +1682,21 @@ def direct_sale_ticket_for_salesperson():
                 seat = seat_choice[1]
                 if hall.reserve_seat(row, seat):
                     new_ticket = Ticket(user, projection_term, seat_choice, 2, None)
-                    new_sold_ticket = SoldTicket(current_user.username, new_ticket,
-                                                 projection_term.movie_projection.ticket_price)
-                    if ticket_controller.add_ticket(new_ticket) and sold_tickets_controller.add_sold_ticket(
-                            new_sold_ticket):
-                        print("Uspešno ste prodali kartu")
-                    else:
-                        print("Prodaja nije uspela. Molimo pokušajte ponovo.")
+                price = float(projection_term.movie_projection.ticket_price)
+                projection_date = projection_term.date
+                if projection_date.weekday() == 1:
+                    price -= 50
+                elif projection_date.weekday() in [5, 6]:
+                    price += 50
+                user_item = user_controller.get_user(name[1:])
+                if user_item is not None and user_item.check_eligibility_for_discount():
+                    price = price * 0.9
+                new_sold_ticket = SoldTicket(current_user.username, new_ticket, price)
+                if ticket_controller.add_ticket(new_ticket) and sold_tickets_controller.add_sold_ticket(
+                        new_sold_ticket):
+                    print("Uspešno ste prodali kartu")
+                else:
+                    print("Prodaja nije uspela. Molimo pokušajte ponovo.")
             else:
                 continue
 
@@ -1707,11 +1719,20 @@ def sale_of_reserved_tickets():
             print("Nevažeći indeks. Molimo pokušajte ponovo.")
             continue
         else:
-            ticket_coice = tickets[reservation_choice - 1]
-            new_sold_ticket = SoldTicket(current_user.username, ticket_coice,
-                                         ticket_coice.projection_term.movie_projection.ticket_price)
+            ticket_choice = tickets[reservation_choice - 1]
+            projection_date = ticket_choice.projection_term.date
+            owner = ticket_choice.owner
+            price = float(ticket_choice.projection_term.movie_projection.ticket_price)
+            if projection_date.weekday() == 1:
+                price -= 50
+            elif projection_date.weekday() in [5, 6]:
+                price += 50
+            user_item = user_controller.get_user(owner)
+            if user_item.check_eligibility_for_discount():
+                price = price * 0.9
+            new_sold_ticket = SoldTicket(current_user.username, ticket_choice, price)
             sold_tickets_controller.add_sold_ticket(new_sold_ticket)
-            ticket_controller.sell_ticket(ticket_coice)
+            ticket_controller.sell_ticket(ticket_choice)
 
 
 def change_ticket_information():
@@ -1966,8 +1987,8 @@ def create_report():
         print("5. Ukupan broj i ukupna cena prodatih karata za izabran dan (u nedelji) održavanja projekcije.")
         print("6. Ukupna cena prodatih karata za zadati film u svim projekcijama.")
         print("7. Ukupan broj i ukupna cena prodatih karata za izabran dan prodaje i odabranog prodavca")
+        print("8. Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakog prodavca) u poslednjih 30 dana.")
         choice = input("Unesi broj opcije: ")
-
 
         if choice == "-1":
             display_user_menu()
@@ -2060,7 +2081,8 @@ def create_report():
                 print("Nevažeći indeks. Molimo pokušajte kasnije.")
                 continue
             else:
-                report_controller.total_price_for_sold_tickets_by_movie(movie_controller.list_of_movies[int(movie_choice)-1])
+                report_controller.total_price_for_sold_tickets_by_movie(
+                    movie_controller.list_of_movies[int(movie_choice) - 1])
 
         elif choice == "7":
             print("1. Ponedeljak")
@@ -2094,7 +2116,8 @@ def create_report():
                 else:
                     report_controller.sold_tickets_by_sale_day_and_sellperson(day_choice, sellperson_choice)
 
-
+        elif choice == "8":
+            report_controller.sold_tickets_for_each_sellperson_in_last_30_days()
 
 
 def main():

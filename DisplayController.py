@@ -291,7 +291,12 @@ class DisplayController:
         for sold_ticket in filtered_tickets:
             total_price += float(sold_ticket.price)
         total_count = len(filtered_tickets)
-        sold_ticket_data.append([sellperson,date,day,total_count,total_price])
+        sold_ticket_data.append([sellperson, date, day, total_count, total_price])
         headers = ["Sellperson", "Date", "Day", "Total count", "Total price"]
         table = tabulate(sold_ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
+        return table
+
+    def sold_tickets_for_each_sellperson_in_last_30_days(self, sold_tickets_data):
+        headers = ["ID", "Sellperson", "Total price", "Total count"]
+        table = tabulate(sold_tickets_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table

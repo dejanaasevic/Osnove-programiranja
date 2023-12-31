@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from DisplayController import DisplayController
 from SoldTicketController import SoldTicketController
 from TicketController import TicketController
+from UserController import UserController
 
 
 class ReportController:
@@ -178,13 +179,66 @@ class ReportController:
         else:
             days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             day = days[int(day_choice) - 1]
-            table = display_controller.sold_tickets_by_sale_day_and_sellperson(day,date_choice ,sellperson_choice,filtered_tickets)
+            table = display_controller.sold_tickets_by_sale_day_and_sellperson(day, date_choice, sellperson_choice,
+                                                                               filtered_tickets)
 
             print("Ukupan broj i ukupna cena prodatih karata za izabran dan prodaje i odabranog prodavca\n")
             print(table)
             with open('report_sold_tickets_by_sale_day_and_sellperson.txt', 'a', encoding='utf-8') as file:
                 file.write(f"Ukupan broj i ukupna cena prodatih karata za izabran dan prodaje i odabranog prodavca\n")
                 file.write(table + "\n")
+
+    def sold_tickets_for_each_sellperson_in_last_30_days(self):
+        user_controller = UserController()
+        user_controller.load_users()
+        list_of_users = user_controller.list_of_users
+        display_controller = DisplayController()
+        selpersons_usernames = []
+        for user in list_of_users:
+            if user.role == "2":
+                selpersons_usernames.append(user.username)
+
+        start_date = datetime.now() - timedelta(days=30)
+        sold_tickets_data = []
+        i = 0
+        for sellperson in selpersons_usernames:
+            i += 1
+            filtered_list = sold_tickets_for_sellperson_in_last_30_days(sellperson, start_date)
+            total_count = len(filtered_list)
+            total_price = 0.0
+            if filtered_list:
+                for ticket_item in filtered_list:
+                    total_price += float(ticket_item.price)
+
+                sold_tickets_data.append([
+                    i, sellperson, total_price, total_count
+                ])
+            else:
+                sold_tickets_data.append([
+                    i, sellperson, 0, 0
+                ])
+
+        table = display_controller.sold_tickets_for_each_sellperson_in_last_30_days(sold_tickets_data)
+        print("Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakogprodavca) u poslednjih 30 dana\n")
+        print(f"period: {start_date.date()} - {datetime.now().date()}")
+        print(table)
+        with open('sold_tickets_for_each_sellperson_in_last_30_days.txt', 'a', encoding='utf-8') as file:
+            file.write(
+                f"Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakogprodavca) u poslednjih 30 dana.\n")
+            file.write(f"period: {start_date.date()} - {datetime.now().date()}")
+            file.write(table + "\n")
+
+
+def sold_tickets_for_sellperson_in_last_30_days(sellperson, start_date):
+    sold_tickets_controller = SoldTicketController()
+    sold_tickets_controller.load_sold_tickets()
+    list_of_sold_tickets = sold_tickets_controller.list_of_sold_tickets
+    last_date = datetime.now()
+    filtered_list = []
+    for sold_ticket in list_of_sold_tickets:
+        if start_date <= sold_ticket.ticket.date <= last_date and sellperson == sold_ticket.sellperson:
+            filtered_list.append(sold_ticket)
+    return filtered_list
 
 
 def find_previous_date_by_day(day_index):

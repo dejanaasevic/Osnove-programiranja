@@ -1,0 +1,3 @@
+- u prodaji karte ja imam usera odnosno vlasnika kome prodajem kartu
+- u sold_ticket fajlu imam te usere gledam da li je taj koji trazim i onda dodajm cenu karte kao sumu
+- ako datum pre godinu dana i ukupna cena karte je veca od 5000 onda ide popust bitch
