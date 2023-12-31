@@ -1,11 +1,11 @@
 nikolijabozic|5678AB|14.12.2023.|1A|09.12.2023.|1
-nikolijabozic|5678AB|14.12.2023.|7E|09.12.2023.|1
-nikolijabozic|1234AA|13.12.2023.|1B|09.12.2023.|1
-stasazdravkovic|1454AR|08.12.2023.|3A|16.12.2023.|2
+nikolijabozic|5678AB|14.12.2023.|7E|09.12.2023.|2
+nikolijabozic|1234AA|13.12.2023.|1B|09.12.2023.|2
+stasazdravkovic|1454AR|08.12.2023.|3A|16.12.2023.|1
 sofijazoric|9201AH|08.12.2023.|4D|17.12.2023.|1
-Andjela Kumazec|9302AM|14.12.2023.|2A|17.12.2023.|1
+Andjela Kumazec|9302AM|14.12.2023.|2A|17.12.2023.|2
 Jelena Karleusa|5678AB|14.12.2023.|7A|17.12.2023.|2
 stasazdravkovic|5678AB|14.12.2023.|7B|17.12.2023.|2
-Danica Komatovic|1690AW|24.12.2023.|8C|17.12.2023.|2
-Anamarija Maksimovic|5678AB|19.12.2023.|6A|27.12.2023.|1
+Danica Komatovic|1690AW|24.12.2023.|8C|17.12.2023.|1
+Anamarija Maksimovic|5678AB|19.12.2023.|6A|27.12.2023.|2
 Katica Bozic|1234AA|11.12.2023.|6A|27.12.2023.|2

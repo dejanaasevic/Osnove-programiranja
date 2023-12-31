@@ -5,3 +5,5 @@ stasazdravkovic,stasa123,Stasa,Zdravkovic,1
 admin,admin01,Admin,Admin,0
 anaparoski,ana1234,Ana,Paroski,3
 sofijazoric,sofi123,Sofija,Zoric,1
+teajovanovic,tea1234,Tea,Jovanovic,2
+nikolapetrovic,nikola123,Nikola,Petrovic,2

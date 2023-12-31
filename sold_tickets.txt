@@ -1,0 +1,6 @@
+teajovanovic|Andjela Kumazec|9302AM|14.12.2023.|2A|17.12.2023.|2|420.00
+zeljanaasevic|Jelena Karleusa|5678AB|14.12.2023.|7A|17.12.2023.|2|430.00
+zeljanaasevic|Anamarija Maksimovic|5678AB|19.12.2023.|6A|27.12.2023.|2|430.00
+zeljanaasevic|nikolijabozic|5678AB|14.12.2023.|7E|09.12.2023.|2|430.00
+zeljanaasevic|stasazdravkovic|5678AB|14.12.2023.|7B|17.12.2023.|2|430.00
+nikolapetrovic|nikolijabozic|1234AA|13.12.2023.|1B|09.12.2023.|2|450.00

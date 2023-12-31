@@ -11,6 +11,8 @@ from MovieProjectionTerm import MovieProjectionTerm
 from MovieProjectionTermController import MovieProjectionTermController
 from MovieProjectionTermCriterion import MovieProjectionTermCriterion
 from ReportController import ReportController
+from SoldTicket import SoldTicket
+from SoldTicketController import SoldTicketController
 from Ticket import Ticket
 from TicketController import TicketController, update_ticket_in_file
 from TicketCriterion import TicketCriterion
@@ -1676,7 +1678,10 @@ def direct_sale_ticket_for_salesperson():
                 seat = seat_choice[1]
                 if hall.reserve_seat(row, seat):
                     new_ticket = Ticket(user, projection_term, seat_choice, 2, None)
-                    if ticket_controller.add_ticket(new_ticket):
+                    new_sold_ticket = SoldTicket(current_user.username, new_ticket,
+                                                 projection_term.movie_projection.ticket_price)
+                    if ticket_controller.add_ticket(new_ticket) and sold_tickets_controller.add_sold_ticket(
+                            new_sold_ticket):
                         print("Uspešno ste prodali kartu")
                     else:
                         print("Prodaja nije uspela. Molimo pokušajte ponovo.")
@@ -1703,6 +1708,9 @@ def sale_of_reserved_tickets():
             continue
         else:
             ticket_coice = tickets[reservation_choice - 1]
+            new_sold_ticket = SoldTicket(current_user.username, ticket_coice,
+                                         ticket_coice.projection_term.movie_projection.ticket_price)
+            sold_tickets_controller.add_sold_ticket(new_sold_ticket)
             ticket_controller.sell_ticket(ticket_coice)
 
 
@@ -1952,9 +1960,19 @@ def create_report():
     print("_____________________")
     while True:
         print("1. Lista prodatih karata za odabran datum prodaje.")
-
+        print("2. Lista prodatih karata za odabran datum termina bioskopske projekcije")
+        print("3. Lista prodatih karata za odabran datum prodaje i odabranog prodavca.")
+        print("4. Ukupan broj i ukupna cena prodatih karata za izabran dan (u nedelji) prodaje.")
+        print("5. Ukupan broj i ukupna cena prodatih karata za izabran dan (u nedelji) održavanja projekcije.")
+        print("6. Ukupna cena prodatih karata za zadati film u svim projekcijama.")
+        print("7. Ukupan broj i ukupna cena prodatih karata za izabran dan prodaje i odabranog prodavca")
         choice = input("Unesi broj opcije: ")
-        if choice == "1":
+
+
+        if choice == "-1":
+            display_user_menu()
+            return
+        elif choice == "1":
             date_choice = input("Unesite datum prodaje karte:")
             if date_choice == "-1":
                 continue
@@ -1963,6 +1981,119 @@ def create_report():
                 continue
             else:
                 report_controller.sold_tickets_by_sale_date(date_choice)
+
+        elif choice == "2":
+            date_choice = input("Unesite datum termina projekcije karte:")
+            if date_choice == "-1":
+                continue
+            elif not MovieProjectionTerm.valid_date_format(date_choice):
+                print("Nevažeći format datuma. Molimo pokušajte ponovo: ")
+                continue
+            else:
+                report_controller.sold_tickets_by_projection_term_date(date_choice)
+
+        elif choice == "3":
+            date_choice = input("Unesite datum prodaje karte: ")
+            if date_choice == "-1":
+                continue
+            elif not MovieProjectionTerm.valid_date_format(date_choice):
+                print("Nevažeći format datuma. Molimo pokušajte ponovo: ")
+                continue
+
+            sellperson_choice = input("Unesite korisnicko ime prodavca:")
+            if sellperson_choice == "-1":
+                continue
+            elif not User.valid_username(sellperson_choice):
+                print("Nevažeće korisničko ime. Molimo pokušajte ponovo.")
+                continue
+            else:
+                sellperson = None
+                for user in user_controller.list_of_users:
+                    if user.username == sellperson_choice and user.role == "2":
+                        sellperson = user
+                if sellperson is None:
+                    print("Nije pronadjen prodavac. Molimo pokusajte kasnije.")
+                    continue
+                else:
+                    report_controller.sold_tickets_by_date_and_sellperson(date_choice, sellperson_choice)
+
+        elif choice == "4":
+            print("1. Ponedeljak")
+            print("2. Utorak")
+            print("3. Sreda")
+            print("4. Četvrtak")
+            print("5. Petak")
+            print("6. Subota")
+            print("7. Nedelja")
+            day_choice = input("Unesite opciju: ")
+            if day_choice == "-1":
+                continue
+            elif not (1 <= int(day_choice) <= 7):
+                print("Nevažeći indeks. Molimo pokušajte kasnije.")
+                continue
+            else:
+                report_controller.sold_tickets_by_sale_day(day_choice)
+
+        elif choice == "5":
+            print("1. Ponedeljak")
+            print("2. Utorak")
+            print("3. Sreda")
+            print("4. Četvrtak")
+            print("5. Petak")
+            print("6. Subota")
+            print("7. Nedelja")
+            day_choice = input("Unesite opciju: ")
+            if day_choice == "-1":
+                continue
+            elif not (1 <= int(day_choice) <= 7):
+                print("Nevažeći indeks. Molimo pokušajte kasnije.")
+                continue
+            else:
+                report_controller.sold_tickets_by_projection_term_day(day_choice)
+
+        elif choice == "6":
+            display_controller.display_movies()
+            movie_choice = input("Unesitiste opciju: ")
+            if movie_choice == "-1":
+                continue
+            elif not (1 <= int(movie_choice) <= len(movie_controller.list_of_movies)):
+                print("Nevažeći indeks. Molimo pokušajte kasnije.")
+                continue
+            else:
+                report_controller.total_price_for_sold_tickets_by_movie(movie_controller.list_of_movies[int(movie_choice)-1])
+
+        elif choice == "7":
+            print("1. Ponedeljak")
+            print("2. Utorak")
+            print("3. Sreda")
+            print("4. Četvrtak")
+            print("5. Petak")
+            print("6. Subota")
+            print("7. Nedelja")
+            day_choice = input("Unesite opciju: ")
+            if day_choice == "-1":
+                continue
+            elif not (1 <= int(day_choice) <= 7):
+                print("Nevažeći indeks. Molimo pokušajte kasnije.")
+                continue
+
+            sellperson_choice = input("Unesite korisnicko ime prodavca:")
+            if sellperson_choice == "-1":
+                continue
+            elif not User.valid_username(sellperson_choice):
+                print("Nevažeće korisničko ime. Molimo pokušajte ponovo.")
+                continue
+            else:
+                sellperson = None
+                for user in user_controller.list_of_users:
+                    if user.username == sellperson_choice and user.role == "2":
+                        sellperson = user
+                if sellperson is None:
+                    print("Nije pronadjen prodavac. Molimo pokusajte kasnije.")
+                    continue
+                else:
+                    report_controller.sold_tickets_by_sale_day_and_sellperson(day_choice, sellperson_choice)
+
 
 
 
@@ -2005,6 +2136,9 @@ if __name__ == '__main__':
 
     cinema_hall_controller = CinemaHallController()
     cinema_hall_controller.load_cinema_halls()
+
+    sold_tickets_controller = SoldTicketController()
+    sold_tickets_controller.load_sold_tickets()
 
     display_controller = DisplayController()
     report_controller = ReportController()

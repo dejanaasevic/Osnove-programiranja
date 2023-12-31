@@ -35,7 +35,7 @@ def update_ticket_in_file(file_ticket, updated_ticket):
     with open('tickets.txt', 'r') as file:
         lines = file.readlines()
         print(file_ticket.owner, file_ticket.seat_label, file_ticket.projection_term.code)
-        print(updated_ticket.owner,updated_ticket.seat_label, updated_ticket.projection_term.code)
+        print(updated_ticket.owner, updated_ticket.seat_label, updated_ticket.projection_term.code)
     print("EVO ME OVDE")
     with open('tickets.txt', 'w') as file:
         for line in lines:
@@ -74,7 +74,7 @@ class TicketController:
             return True
         else:
             if not isinstance(ticket, Ticket):
-                print("Prosleđen objekat nije tipa User")
+                print("Prosleđen objekat nije tipa Ticket")
                 return False
 
     def remove_ticket(self, ticket_item):
@@ -114,7 +114,6 @@ class TicketController:
                 ticket.update_status(2)
                 update_ticket_in_file(ticket_item, ticket)
 
-
     def update_ticket_in_list(self, ticket_item):
         for ticket in self.list_of_tickets:
             if (
@@ -126,4 +125,3 @@ class TicketController:
             ):
                 ticket.update_status(2)
                 update_ticket_in_file(ticket_item, ticket)
-
