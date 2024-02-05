@@ -1,8 +1,6 @@
 Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakogprodavca) u poslednjih 30 dana.
-Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakogprodavca) u poslednjih 30 dana.
-Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakogprodavca) u poslednjih 30 dana.
-Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakogprodavca) u poslednjih 30 dana.
-period: 2023-12-01 - 2023-12-31╒══════╤════════════════╤═══════════════╤═══════════════╕
+period: 2023-12-01 - 2023-12-31
+╒══════╤════════════════╤═══════════════╤═══════════════╕
 │  ID  │ Sellperson     │  Total price  │  Total count  │
 ╞══════╪════════════════╪═══════════════╪═══════════════╡
 │  1   │ zeljanaasevic  │     1720      │       4       │

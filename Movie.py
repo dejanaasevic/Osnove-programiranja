@@ -1,3 +1,4 @@
+import copy
 import re
 from tabulate import tabulate
 import textwrap
@@ -22,6 +23,9 @@ class Movie:
                       f"Main roles:{self.main_roles}\nCountry of origin:{self.country_of_origin}\n"
                       f"Release year:{self.release_year}\nDescription:{self.description}\n")
         print(movie_info)
+
+    def make_copy(self):
+        return copy.copy(self)
 
     def display_movie(self):
         movie_data = [

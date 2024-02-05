@@ -1,3 +1,4 @@
+import random
 from datetime import datetime, timedelta
 from CinemaHall import CinemaHall
 from CinemaHallController import CinemaHallController
@@ -647,6 +648,171 @@ def registration_new_movie_projection():
             print("Registracija nije uspela. Molimo pokušajte ponovo.")
 
 
+def update_projection():
+    while True:
+        display_controller.display_projections()
+        choice = input("Unesite opciju: ")
+        if choice == "-1":
+            display_user_menu()
+            return
+        if not (1 <= int(choice) <= len(movie_projection_controller.list_of_projections)):
+            print("Nevažeća opcija. Molimo pokušajte kasnije.")
+            continue
+        else:
+            projection = movie_projection_controller.list_of_projections[int(choice) - 1]
+            projection_copy = projection.make_copy()
+            print("IZMENA PROJEKCIJE")
+            print("_________________")
+            print("Za povratak na meni unesite: -1")
+            print("1. Sala")
+            print("2. Vreme početka")
+            print("3. Vreme kraja")
+            print("4. Dani projekcije")
+            print("5. Film")
+            print("6. Cena")
+            choice = input("Unesite opciju: ")
+
+            if choice == "-1":
+                continue
+            if choice == "1":
+                display_controller.display_cinema_halls()
+                new_hall_code = input("Unesite nov kod sale: ")
+                if new_hall_code.strip() != "":
+                    if not CinemaHall.valid_hall_code(new_hall_code):
+                        print("Nevažeći kod sale. Molimo pokušajte ponovo.")
+                        continue
+                    else:
+                        for cinema_hall in cinema_hall_controller.list_of_cinema_halls:
+                            if cinema_hall.hall_code == new_hall_code:
+                                projection.hall = cinema_hall
+                                if movie_projection_controller.update_projection(projection_copy, projection):
+                                    print("Uspešno ste izmenili cenu.")
+                                    continue
+                        else:
+                            print("Sala sa datim kodom nije pronađena. Molimo pokušajte ponovo.")
+                            continue
+            if choice == "2":
+                new_start_time = input("Unesite novo vreme početka: ")
+                if new_start_time.strip() != "":
+                    if not MovieProjection.valid_time_format(new_start_time):
+                        print("Nevažeće vreme početka. Molimo pokušajte ponovo.")
+                        continue
+                    else:
+                        projection.start_time = new_start_time
+                        if movie_projection_controller.update_projection(projection_copy, projection):
+                            print("Uspešno ste izmenili cenu.")
+                            continue
+            if choice == "3":
+                new_end_time = input("Unesite novo vreme kraja: ")
+                if new_end_time.strip() != "":
+                    if not MovieProjection.valid_time_format(new_end_time):
+                        print("Nevažeće vreme kraja. Molimo pokušajte ponovo.")
+                        continue
+                    else:
+                        projection.end_time = new_end_time
+                        if movie_projection_controller.update_projection(projection_copy, projection):
+                            print("Uspešno ste izmenili cenu.")
+                            continue
+            if choice == "4":
+                new_days = input("Unesite nove dane projekcije: ")
+                if new_days.strip() != "":
+                    if not MovieProjection.valid_day_input(new_days):
+                        print("Nevažeći unos dana projekcije. Molimo pokušajte ponovo.")
+                        continue
+                    else:
+                        projection.projection_days = new_days
+                        if movie_projection_controller.update_projection(projection_copy, projection):
+                            print("Uspešno ste izmenili cenu.")
+                            continue
+            if choice == "5":
+                display_controller.display_movies()
+                new_movie_title = input("Unesite novi naslov filma: ")
+                if new_movie_title.strip() != "":
+                    for movie in movie_controller.list_of_movies:
+                        if movie.title == new_movie_title:
+                            projection.movie = movie
+                            if movie_projection_controller.update_projection(projection_copy, projection):
+                                print("Uspešno ste izmenili cenu.")
+                            continue
+                    else:
+                        print("Film sa datim naslovom nije pronađen. Molimo pokušajte ponovo.")
+                        continue
+            if choice == "6":
+                new_price = input("Unesite novu cenu: ")
+                if new_price.strip() != "":
+                    if not MovieProjection.valid_price(new_price):
+                        print("Nevažeća cena. Molimo pokušajte ponovo.")
+                        continue
+                    else:
+                        projection.price = new_price
+                        if movie_projection_controller.update_projection(projection_copy, projection):
+                            print("Uspešno ste izmenili cenu.")
+                            continue
+
+
+def remove_projection():
+    while True:
+        display_controller.display_projection()
+        choice = input("Unesite broj izabrane projekcije:")
+        if choice == "-1":
+            display_user_menu()
+            return
+        elif not (1 <= int(choice) <= len(movie_projection_controller.list_of_projections)):
+            print("Pogrešan unos. Molimo pokušajte ponovo.")
+            continue
+        else:
+            delete = True
+            projection_choice = movie_projection_controller.list_of_projections[int(choice) - 1]
+            for ticket in ticket_controller.list_of_tickets:
+                if (ticket.projection_term.movie_projection.movie == projection_choice.movie and
+                        ticket.projection_term.date > datetime.now().date()):
+                    delete = False
+                    break
+            if delete:
+                delete_projection_term_list = []
+                for projection_term in movie_projection_term_controller.list_of_projection_terms:
+                    if (projection_term.movie_projection.movie == projection_choice.movie and
+                            projection_term.movie_projection.projection_code == projection_choice.projection_code
+                            and projection_term.movie_projection.hall == projection_choice.hall and
+                            projection_term.movie_projection.start_time == projection_choice.start_time and
+                            projection_term.movie_projection.end_time == projection_choice.end_time and
+                            projection_term.movie_projection.projection_days == projection_choice.projection_days
+                            and projection_term.movie_projection.ticket_price == projection_choice.ticket_price):
+                        delete_projection_term_list.append(projection_term)
+                movie_projection_term_controller.remove_projection_terms(delete_projection_term_list)
+
+                delete_projection = []
+                for projection in movie_projection_controller.list_of_projections:
+                    if (projection.movie == projection_choice.movie and
+                            projection.projection_code == projection_choice.projection_code
+                            and projection.hall == projection_choice.hall and
+                            projection.start_time == projection_choice.start_time and
+                            projection.end_time == projection_choice.end_time and
+                            projection.projection_days == projection_choice.projection_days
+                            and projection.ticket_price == projection_choice.ticket_price):
+                        delete_projection.append(projection)
+                movie_projection_controller.remove_projections(delete_projection)
+            else:
+                print("Trenutno postoje važeće karte. Molimo pokušajte kasnije.")
+                continue
+
+
+def generate_new_projection_terms():
+    current_date = datetime.now().date()
+    for i in range(7):
+        first_date = current_date + timedelta(days=i)
+        second_date = first_date + timedelta(days=7)
+        day_in_week = MovieProjectionTermController.get_day_of_week(first_date)
+        for projection in movie_projection_controller.list_of_projections:
+            if day_in_week in projection.projection_days:
+                index = MovieProjectionTermController.generate_index(projection)
+                first_projection_term = MovieProjectionTerm(projection, index, first_date)
+                second_projection_term = MovieProjectionTerm(projection, index, second_date)
+                MovieProjectionTermController.add_projection_term(first_projection_term)
+                MovieProjectionTermController.add_projection_term(second_projection_term)
+
+
+
 def registration_new_cinemahall():
     list_of_cinema_hall = cinema_hall_controller.list_of_cinema_halls
     print("REGISTRACIJA NOVE BIOSKOPSKE SALE")
@@ -780,6 +946,158 @@ def registration_new_movie():
             display_user_menu()
         else:
             print("Registracija nije uspela. Molimo pokušajte ponovo.")
+
+
+def update_movie():
+    while True:
+        display_controller.display_movies()
+        choice = input("Unesite opciju: ")
+        if choice == "-1":
+            display_user_menu()
+            return
+        if not (1 <= int(choice) <= len(movie_controller.list_of_movies)):
+            print("Nevažeća opcija. Molimo pokušajte kasnije.")
+            continue
+        else:
+            movie = movie_controller.list_of_movies[int(choice) - 1]
+            movie_copy = movie.make_copy()
+            print("IZMENA FILMA")
+            print("___________")
+            print("Za povratak na meni unesite: -1")
+            print("1. Naziv")
+            print("2. Žanrovi")
+            print("3. Režiseri")
+            print("4. Glavne uloge")
+            print("5. Država porekla")
+            print("6. Godina")
+            print("7. Opis")
+            choice = input("Unesite opciju: ")
+
+            if choice == "1":
+                new_title = input("Unesite nov naziv:")
+                if new_title == "-1":
+                    continue
+                elif not Movie.valid_name(new_title):
+                    print("Nevazece ime. Molimo pokusajte ponovo.")
+                    continue
+                else:
+                    movie.title = new_title
+                    if movie_controller.update_movie(movie_copy, movie):
+                        print("Uspesno ste izmenili ime")
+                        continue
+
+            if choice == "2":
+                display_controller.display_genres()
+                new_genres = input("Unesite nove žanrove: ")
+                if new_genres == "-1":
+                    continue
+                elif Movie.valid_genre(new_genres):
+                    print("Nevažeći žanrovi. Molimo pokušajte ponovo.")
+                    continue
+                else:
+                    movie.genre = new_genres
+                    if movie_controller.update_movie(movie_copy, movie):
+                        print("Uspešno ste izmenili žanrove.")
+                        continue
+
+            if choice == "3":
+                new_directors = input("Unesite nove režisere: ")
+                if new_directors == "-1":
+                    continue
+                elif not Movie.valid_person_name(new_directors):
+                    print("Nevažće ime. Molimo pokušajte ponovo")
+                    continue
+                else:
+                    movie.director = new_directors
+                    if movie_controller.update_movie(movie_copy, movie):
+                        print("Uspešno ste izmenili direktore.")
+                        continue
+
+            if choice == "4":
+                new_actors = input("Unesite nove glumce: ")
+                if new_actors == "-1":
+                    continue
+                elif not Movie.valid_person_name(new_actors):
+                    print("Nevažće ime. Molimo pokušajte ponovo")
+                    continue
+                else:
+                    movie.main_roles = new_actors
+                    if movie_controller.update_movie(movie_copy, movie):
+                        print("Uspešno ste izmenili glavne uloge.")
+                        continue
+
+            if choice == "5":
+                new_country = input("Unesite novu državu porekla: ")
+                if new_country == "-1":
+                    continue
+                elif not Movie.valid_country_name(new_country):
+                    print("Nevažće ime. Molimo pokušajte ponovo")
+                    continue
+                else:
+                    movie.country_of_origin = new_country
+                    if movie_controller.update_movie(movie_copy, movie):
+                        print("Uspešno ste izmenili državu.")
+                        continue
+
+            if choice == "6":
+                new_year = input("Unesite novu godinu: ")
+                if new_year == "-1":
+                    continue
+                elif not Movie.valid_year(new_year):
+                    print("Nevažća godina. Molimo pokušajte ponovo")
+                    continue
+                else:
+                    movie.release_year = new_year
+                    if movie_controller.update_movie(movie_copy, movie):
+                        print("Uspešno ste izmenili žanrove.")
+                        continue
+
+            if choice == "7":
+                new_description = input("Unesite nov opis: ")
+                if new_description == "-1":
+                    continue
+                else:
+                    movie.description = new_description
+                    if movie_controller.update_movie(movie_copy, movie):
+                        print("Uspešno ste izmenili opis.")
+                        continue
+
+
+def remove_movie():
+    while True:
+        display_controller.display_movies()
+        choice = input("Unesite broj izabranog filma:")
+        if choice == "-1":
+            display_user_menu()
+            return
+        elif not (1 <= int(choice) <= len(movie_controller.list_of_movies)):
+            print("Pogrešan unos. Molimo pokušajte ponovo.")
+            continue
+        else:
+            delete = True
+            movie_choice = movie_controller.list_of_movies[int(choice) - 1]
+            for ticket in ticket_controller.list_of_tickets:
+                if (ticket.projection_term.movie_projection.movie == movie_choice.title and
+                        ticket.projection_term.date > datetime.now().date()):
+                    delete = False
+                    break
+            if delete:
+                delete_projection_term_list = []
+                for projection_term in movie_projection_term_controller.list_of_projection_terms:
+                    if projection_term.movie_projection.movie == movie_choice.title:
+                        delete_projection_term_list.append(projection_term)
+                movie_projection_term_controller.remove_projection_terms(delete_projection_term_list)
+
+                delete_projection = []
+                for projection in movie_projection_controller.list_of_projections:
+                    if projection.movie == movie_choice.title:
+                        delete_projection.append(projection)
+                movie_projection_controller.remove_projections(delete_projection)
+
+                movie_controller.remove_movie(movie_choice)
+            else:
+                print("Trenutno postoje važeće karte. Molimo pokušajte kasnije.")
+                continue
 
 
 def registration_new_movie_projection_term():

@@ -19,6 +19,17 @@ cinema_controller.load_cinema_halls()
 list_of_halls = cinema_controller.list_of_cinema_halls
 
 
+def remove_projection_term_from_file(projection_term):
+    with open('projectionterms.txt', 'r') as file:
+        lines = file.readlines()
+
+    with open('projectionterms.txt', 'w') as file:
+        for line in lines:
+            if line == projection_term.code:
+                continue
+            file.write(line)
+
+
 class MovieProjectionTermController:
 
     def __init__(self):
@@ -68,6 +79,18 @@ class MovieProjectionTermController:
                 print("Prosleđen objekat nije tipa MovieProjectionTerm")
                 return False
 
+    def remove_projection_terms(self, delete_projection_term_list):
+        for projection_term in delete_projection_term_list:
+            self.remove_projection_term(projection_term)
+
+    def remove_projection_term(self, projection_term_choice):
+        for projection_term in self.list_of_projection_terms:
+            if projection_term.code == projection_term_choice.code:
+                remove_projection_term_from_file(projection_term)
+                self.list_of_projection_terms.remove(projection_term)
+                return True
+        return False
+
     @staticmethod
     def get_day_of_week(date_item):
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -82,3 +105,19 @@ class MovieProjectionTermController:
             if day == day_of_week:
                 return True
         return False
+
+    def generate_index(self, projection):
+        index = None
+        for projection_term in self.list_of_projection_terms:
+            if projection_term.movie_projection.projection_code == projection.projection_code:
+                index = projection_term.index
+                break
+        if index is not None:
+            return index
+        else:
+            max_index = list_of_projections[0].index
+            for projection_term in self.list_of_projection_terms:
+                if projection_term.index > max_index:
+                    max_index = projection_term.index
+
+            return  max_index+1

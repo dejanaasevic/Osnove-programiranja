@@ -167,6 +167,19 @@ class DisplayController:
         headers = ["ID", "Projection term code", "Title", "Hall", "Date", "Start time", "End time"]
         print(tabulate(projection_term_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
+    def display_projection(self):
+        projection_controller = MovieProjectionController()
+        projection_controller.load_projections()
+        list_of_projection = projection_controller.list_of_projections
+        projection_data = []
+        i = 1
+        for projection in list_of_projection:
+            projection_data.append([
+                i, projection.projection_code, projection.hall, projection.start_time, projection.end_time,
+                projection.projection_days,projection.movie, projection.ticket_price])
+            i += 1
+        headers = ["ID", "Projection term code", "Hall", "Start time", "End time", "Projection days", "Title", "Ticket Price"]
+        print(tabulate(projection_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
     def display_sold_tickets_by_sale_date(self, filtered_tickets):
         ticket_data = []
         i = 1
@@ -300,3 +313,4 @@ class DisplayController:
         headers = ["ID", "Sellperson", "Total price", "Total count"]
         table = tabulate(sold_tickets_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
+
