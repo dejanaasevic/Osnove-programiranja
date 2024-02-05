@@ -4,7 +4,7 @@ from MovieCriterion import MovieCriterion
 from MovieProjectionController import MovieProjectionController
 
 movie_projection_controller = MovieProjectionController()
-movie_projection_controller.list_of_projections()
+movie_projection_controller.load_projections()
 list_of_projections = movie_projection_controller.list_of_projections
 
 

@@ -19,6 +19,12 @@ class DisplayController:
         table = tabulate([[genre] for genre in genres_list], headers=["Genres"], tablefmt="fancy_grid")
         print(table)
 
+    def display_user(self, user):
+        user_data = [user.username, user.password, user.name, user.surname, user.role]
+        headers = ["Korisničko ime", "Lozinka", "Ime", "Prezime", "Uloga"]
+        table = tabulate(user_data, headers=headers,tablefmt="fancy_grid", numalign="center")
+        print(table)
+
     def display_filtered_projection_term(self, filtered_list):
         projection_term_data = []
         for term in filtered_list:

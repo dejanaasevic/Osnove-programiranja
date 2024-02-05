@@ -21,6 +21,8 @@ from User import User
 from UserController import UserController
 from tabulate import tabulate
 
+from ValidationController import ValidationController
+
 current_user = None
 
 
@@ -409,15 +411,15 @@ def change_personal_information():
 
 def registration():
     global current_user
-    print("REGISTRACIJA NA SISTEM")
-    print("_______________________")
+    print("REGISTRACIJA")
+    print("____________")
     while True:
         print("Za povratak na meni unesite: -1")
         username = input("Unesite Vaše korisničko ime: ")
         if username == '-1':
             main()
             return
-        elif not User.valid_username(username):
+        elif not validation_controller.user_valid_username(username):
             print("Nevažeće korisničko ime. Molimo pokušajte ponovo.")
             continue
 
@@ -425,7 +427,7 @@ def registration():
         if password == '-1':
             main()
             return
-        elif not User.valid_password(password):
+        elif not validation_controller.user_valid_password(password):
             print("Nevažeća lozinka. Molimo pokušajte ponovo.")
             continue
 
@@ -433,7 +435,7 @@ def registration():
         if name == '-1':
             main()
             return
-        elif not User.valid_name(name):
+        elif not validation_controller.user_valid_name(name):
             print("Nevažeće ime. Molimo pokušajte ponovo.")
             continue
 
@@ -441,7 +443,7 @@ def registration():
         if surname == '-1':
             main()
             return
-        elif not User.valid_surname(surname):
+        elif not validation_controller.user_valid_surname(surname):
             print("Nevažeće prezime. Molimo pokušajte ponovo.")
             continue
 
@@ -450,7 +452,7 @@ def registration():
         new_user = User(username, password, name, surname, role)
         current_user = new_user
         if user_controller.add_user(new_user):
-            print("Uspešno ste se registrovali!!!")
+            print("Uspešno ste se registrovali!")
             display_user_menu()
             break
         else:
@@ -2482,5 +2484,9 @@ if __name__ == '__main__':
     sold_tickets_controller.load_sold_tickets()
 
     display_controller = DisplayController()
+
     report_controller = ReportController()
+
+    validation_controller = ValidationController()
+
     main()

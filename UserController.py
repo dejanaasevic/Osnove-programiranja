@@ -1,10 +1,13 @@
 from User import User
+from ValidationController import ValidationController
+
+validation_controller = ValidationController()
 
 
 def save_user(user):
     with open('users.txt', 'a') as file:
         file.write(
-            f"{user.username},{user.password},{user.name},{user.surname},{user.role}\n")
+            f"{user.username}|{user.password}|{user.name}|{user.surname}|{user.role}\n")
 
 
 def update_user_in_file(updated_user):
@@ -13,9 +16,9 @@ def update_user_in_file(updated_user):
 
     with open('users.txt', 'w') as file:
         for line in lines:
-            data = line.strip().split(',')
+            data = line.strip().split('|')
             if data[0] == updated_user.username:
-                updated_line = ",".join([
+                updated_line = "|".join([
                     updated_user.username, updated_user.password,
                     updated_user.name, updated_user.surname,
                     str(updated_user.role)
@@ -32,7 +35,7 @@ class UserController:
     def load_users(self):
         with open('users.txt', 'r') as file:
             for line in file:
-                new_user = line.strip().split(',')
+                new_user = line.strip().split('|')
                 self.list_of_users.append(User(*new_user))
 
     def unique_username(self, username):
@@ -48,10 +51,10 @@ class UserController:
             return True
         else:
             if not isinstance(user, User):
-                print("Prosleđen objekat nije tipa User")
+                print("Prosleđen objekat nije tipa User. Molimo pokušajte ponovo.")
                 return False
             if not self.unique_username(user.username):
-                print("Korisničko ime već postoji")
+                print("Korisničko ime već postoji. Molimo pokušajte ponovo.")
                 return False
 
     def get_user(self, username):
@@ -63,8 +66,9 @@ class UserController:
     def update_user_in_list(self, updated_user):
         for user in self.list_of_users:
             if user.username == updated_user.username:
-                if User.valid_password(updated_user.password) and User.valid_name(
-                        updated_user.name) and User.valid_surname(updated_user.surname):
+                if (validation_controller.user_valid_password(updated_user.password)
+                        and validation_controller.user_valid_name(updated_user.name)
+                        and validation_controller.user_valid_surname(updated_user.surname)):
                     user.name = updated_user.name
                     user.surname = updated_user.surname
                     user.password = updated_user.password
