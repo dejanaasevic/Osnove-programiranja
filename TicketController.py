@@ -88,7 +88,6 @@ class TicketController:
             ):
                 remove_ticket_from_file(ticket)
                 self.list_of_tickets.remove(ticket)
-
                 return True
         return False
 

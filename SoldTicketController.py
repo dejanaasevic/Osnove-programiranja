@@ -17,6 +17,25 @@ def save_sold_ticket(sold_ticket):
                    f"|{sold_ticket.price}\n")
 
 
+def remove_sold_ticket_from_file(sold_ticket):
+    with open('sold_tickets.txt', 'r') as file:
+        lines = file.readlines()
+    with open('sold_tickets.txt', 'w') as file:
+        for line in lines:
+            sold_ticket_info = line.strip().split('|')
+            ticket_code = sold_ticket_info[2] + '|' + sold_ticket_info[3]
+            if (sold_ticket_info[0] == sold_ticket.sellperson and
+                    sold_ticket_info[1] == sold_ticket.ticket.owner and
+                    ticket_code == sold_ticket.ticket.projection_term.code and
+                    sold_ticket_info[4] == sold_ticket.ticket.seat_label and
+                    sold_ticket_info[5] == sold_ticket.ticket.date and
+                    sold_ticket_info[6] == sold_ticket.ticket.status and
+                    sold_ticket_info[7] == sold_ticket.price
+            ):
+                continue
+            file.write(line)
+
+
 class SoldTicketController:
     def __init__(self):
         self.list_of_sold_tickets = []
@@ -33,12 +52,21 @@ class SoldTicketController:
 
     def add_sold_ticket(self, sold_ticket):
         if isinstance(sold_ticket, SoldTicket):
-            print("evo")
             self.list_of_sold_tickets.append(sold_ticket)
             save_sold_ticket(sold_ticket)
             return True
         else:
-            print("evo1")
             if not isinstance(sold_ticket, SoldTicket):
                 print("Prosleđen objekat nije tipa SoldTicket")
                 return False
+
+    def remove_sold_ticket(self, ticket):
+        for sold_ticket in self.list_of_sold_tickets:
+            if (sold_ticket.ticket.projection_term.code == ticket.projection_term.code and
+                    sold_ticket.ticket.seat_label == ticket.seat_label and
+                    sold_ticket.ticket.owner == ticket.owner and
+                    sold_ticket.ticket.date == ticket.date):
+                remove_sold_ticket_from_file(sold_ticket)
+                self.list_of_sold_tickets.remove(sold_ticket)
+                return True
+        return False

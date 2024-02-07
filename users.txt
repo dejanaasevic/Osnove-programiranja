@@ -6,3 +6,5 @@ anaparoski|ana1234|Ana|Paroski|3
 sofijazoric|sofi123|Sofija|Zoric|1
 teajovanovic|tea1234|Tea|Jovanovic|2
 nikolapetrovic|nikola123|Nikola|Petrovic|2
+veliborkasevic|veliborka123|Veliborka|Sevic|1
+zeljkosevic|zeljkos123|Zeljko|Sevic|1

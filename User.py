@@ -2,6 +2,11 @@ from datetime import datetime, timedelta
 from SoldTicketController import SoldTicketController
 from DisplayController import DisplayController
 
+display_controller = DisplayController()
+sold_tickets_controller = SoldTicketController()
+sold_tickets_controller.load_sold_tickets()
+list_of_sold_tickets = sold_tickets_controller.list_of_sold_tickets
+
 
 class User:
     def __init__(self, username, password, name, surname, role):
@@ -12,10 +17,6 @@ class User:
         self.role = role
 
     def check_eligibility_for_discount(self):
-        sold_tickets_controller = SoldTicketController()
-        sold_tickets_controller.load_sold_tickets()
-        list_of_sold_tickets = sold_tickets_controller.list_of_sold_tickets
-
         end_date = datetime.now().date()
         start_date = end_date - timedelta(days=365)
         filtered_list = []
@@ -36,5 +37,4 @@ class User:
                 return False
 
     def display_user(self):
-        display_controller = DisplayController()
         display_controller.display_user(self)

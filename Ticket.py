@@ -13,7 +13,7 @@ class Ticket:
         if date is not None:
             self.date = datetime.strptime(date, '%d.%m.%Y.')
         else:
-            self.date = datetime.now()
+            self.date = datetime.now().strftime("%d.%m.%Y.")
 
     def update_status(self, new_status):
         self.status = new_status
