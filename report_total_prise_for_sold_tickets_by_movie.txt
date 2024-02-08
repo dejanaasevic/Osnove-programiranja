@@ -1,7 +1,0 @@
-Ukupna cena prodatih karata za zadati film u svim projekcijama
-film: Black Widow
-╒═══════════════╤═══════════════╕
-│ Movie title   │  Total price  │
-╞═══════════════╪═══════════════╡
-│ Black Widow   │     1720      │
-╘═══════════════╧═══════════════╛

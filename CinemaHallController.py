@@ -3,7 +3,8 @@ from CinemaHall import CinemaHall
 
 def save_cinema_hall(cinema_hall):
     with open('cinemahalls.txt', 'a') as file:
-        file.write(f"{cinema_hall.hall_code}|{cinema_hall.num_rows}|{cinema_hall.seat_labels}|{cinema_hall.hall_name}\n")
+        file.write(
+            f"{cinema_hall.hall_code}|{cinema_hall.num_rows}|{cinema_hall.seat_labels}|{cinema_hall.hall_name}\n")
 
 
 class CinemaHallController:
@@ -23,5 +24,5 @@ class CinemaHallController:
             return True
         else:
             if not isinstance(cinemahall, CinemaHall):
-                print("Prosleđen objekat nije tipa CinemaHall")
+                print("Prosleđen objekat nije tipa CinemaHall.")
                 return False

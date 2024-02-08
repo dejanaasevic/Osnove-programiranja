@@ -8,24 +8,26 @@ from TicketController import TicketController
 
 
 class DisplayController:
-
-    def display_genres(self):
+    @staticmethod
+    def display_genres():
         genres_list = [
-            "action", "adventure", "animation", "comedy", "crime", "documentary",
-            "drama", "fantasy", "horror", "mystery", "romance", "sci-fi",
-            "thriller", "western", "war", "biography", "music", "sports",
-            "superhero", "family", "teenage"
+            "akcija", "avantura", "animacija", "komedija", "kriminal", "dokumentarni",
+            "drama", "fantazija", "horor", "misterija", "romansa", "naučna fantastika",
+            "triler", "vestern", "ratni", "biografija", "muzika", "sportski",
+            "superheroj", "porodični", "tinejdžerski"
         ]
-        table = tabulate([[genre] for genre in genres_list], headers=["Genres"], tablefmt="fancy_grid")
+        table = tabulate([[genre] for genre in genres_list], headers=["žanr"], tablefmt="fancy_grid", numalign="center")
         print(table)
 
-    def display_user(self, user):
+    @staticmethod
+    def display_user(user):
         user_data = [user.username, user.password, user.name, user.surname, user.role]
-        headers = ["Korisničko ime", "Lozinka", "Ime", "Prezime", "Uloga"]
+        headers = ["korisničko ime", "lozinka", "ime", "prezime", "uloga"]
         table = tabulate(user_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         print(table)
 
-    def display_filtered_projection_term(self, filtered_list):
+    @staticmethod
+    def display_filtered_projection_term(filtered_list):
         projection_term_data = []
         i = 0
         for term in filtered_list:
@@ -35,10 +37,11 @@ class DisplayController:
                 i, term.movie_projection.movie, term.movie_projection.hall.hall_code, formatted_date,
                 term.movie_projection.start_time, term.movie_projection.end_time
             ])
-        headers = ["ID", "Title", "Hall", "Date", "Start time", "End time"]
+        headers = ["ID", "naziv", "sala", "datim", "vreme početka", "vreme kraja"]
         print(tabulate(projection_term_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_filtered_movies(self, filtered_list):
+    @staticmethod
+    def display_filtered_movies(filtered_list):
         movie_data = []
         for movie in filtered_list:
             wrapped_roles = "\n".join(textwrap.wrap(movie.main_roles, width=25))
@@ -47,10 +50,11 @@ class DisplayController:
                 wrapped_roles, movie.country_of_origin, str(movie.release_year)
             ])
 
-        headers = ["Title", "Genre", "Duration", "Director", "Main Roles", "Country of Origin", "Release Year"]
+        headers = ["naslov", "žanr", "trajanje", "režiser", "glavne uloge", "zemlja porekla", "godina"]
         print(tabulate(movie_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_movies(self):
+    @staticmethod
+    def display_movies():
         movie_controller = MovieController()
         movie_controller.load_movies()
         list_of_movies = movie_controller.list_of_movies
@@ -64,10 +68,11 @@ class DisplayController:
                 wrapped_roles, movie.country_of_origin, str(movie.release_year)
             ])
 
-        headers = ["ID", "Title", "Genre", "Duration", "Director", "Main Roles", "Country of Origin", "Release Year"]
+        headers = ["ID", "naslov", "žanr", "trajanje", "režiser", "glavne uloge", "zemlja porekla", "godina"]
         print(tabulate(movie_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_movies_name(self):
+    @staticmethod
+    def display_movies_name():
         movie_controller = MovieController()
         movie_controller.load_movies()
         list_of_movies = movie_controller.list_of_movies
@@ -78,10 +83,11 @@ class DisplayController:
             movie_data.append([
                 i, movie.title
             ])
-        headers = ["ID", "Title"]
+        headers = ["ID", "naziv"]
         print(tabulate(movie_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_cinemahall_code(self):
+    @staticmethod
+    def display_cinemahall_code():
         cinemahall_controler = CinemaHallController()
         cinemahall_controler.load_cinema_halls()
         list_of_halls = cinemahall_controler.list_of_cinema_halls
@@ -92,9 +98,10 @@ class DisplayController:
             hall_data.append([
                 i, hall.hall_code
             ])
-        headers = ["ID", "Hall Code"]
+        headers = ["ID", "kod sale"]
         print(tabulate(hall_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
+    @staticmethod
     def display_reserved_tickets(self):
         ticket_controller = TicketController()
         ticket_controller.load_tickets()
@@ -111,14 +118,11 @@ class DisplayController:
                 ])
             i += 1
 
-        headers = [
-            "ID", "Code term", "Owner", "Movie", "Date", "Start time",
-            "End time", "Seat label", "Status"
-        ]
-
+        headers = ["ID", "oznaka termina", "vlasnik", "film", "datum", "početak", "kraj", "oznaka sedišta", "status"]
         print(tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_projection_codes(self):
+    @staticmethod
+    def display_projection_codes():
         projection_controller = MovieProjectionController()
         projection_controller.load_projections()
         list_of_projections = projection_controller.list_of_projections
@@ -130,11 +134,12 @@ class DisplayController:
                 i, int(projection.projection_code)
             ])
 
-        # number_table = [[int(num)] for num in projection_code_data]
-        table = tabulate(projection_code_data, headers=["ID", "Code"], tablefmt="fancy_grid", numalign="center")
+        table = tabulate(projection_code_data, headers=["ID", "kod projekcije"], tablefmt="fancy_grid",
+                         numalign="center")
         print(table)
 
-    def display_filtered_ticket(self, filtered_list):
+    @staticmethod
+    def display_filtered_ticket(filtered_list):
         ticket_data = []
         i = 1
         for ticket in filtered_list:
@@ -147,12 +152,13 @@ class DisplayController:
             ])
             i += 1
         headers = [
-            "ID", "Code term", "Owner", "Movie", "Date", "Start time",
-            "End time", "Seat label", "Status"
+            "ID", "kod termina", "vlasnik", "film", "datum", "vreme početka",
+            "vreme završetka", "oznaka sedišta", "status"
         ]
         print(tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_projection_term_codes(self):
+    @staticmethod
+    def display_projection_term_codes():
         projection_term_controller = MovieProjectionTermController()
         projection_term_controller.load_projection_terms()
         list_of_projection_terms = projection_term_controller.list_of_projection_terms
@@ -163,10 +169,11 @@ class DisplayController:
                 i, term.code
             ])
             i += 1
-        headers = ["ID", "Code term"]
+        headers = ["ID", "kod termina"]
         print(tabulate(projection_term_code_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_projection_term(self):
+    @staticmethod
+    def display_projection_term():
         projection_term_controller = MovieProjectionTermController()
         projection_term_controller.load_projection_terms()
         list_of_projection_terms = projection_term_controller.list_of_projection_terms
@@ -179,10 +186,11 @@ class DisplayController:
                 term.movie_projection.start_time, term.movie_projection.end_time
             ])
             i += 1
-        headers = ["ID", "Projection term code", "Title", "Hall", "Date", "Start time", "End time"]
+        headers = ["ID", "kod termina projekcije", "naslov", "sala", "datum", "vreme početka", "vreme završetka"]
         print(tabulate(projection_term_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_projection(self):
+    @staticmethod
+    def display_projection():
         projection_controller = MovieProjectionController()
         projection_controller.load_projections()
         list_of_projection = projection_controller.list_of_projections
@@ -193,11 +201,13 @@ class DisplayController:
                 i, projection.projection_code, projection.hall, projection.start_time, projection.end_time,
                 projection.projection_days, projection.movie, projection.ticket_price])
             i += 1
-        headers = ["ID", "Projection term code", "Hall", "Start time", "End time", "Projection days", "Title",
-                   "Ticket Price"]
+        headers = ["ID", "kod termina projekcije", "sala", "vreme početka", "vreme završetka", "dani projekcije",
+                   "naslov", "cena karte"
+                   ]
         print(tabulate(projection_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
-    def display_sold_tickets_by_sale_date(self, filtered_tickets):
+    @staticmethod
+    def display_sold_tickets_by_sale_date(filtered_tickets):
         ticket_data = []
         i = 1
         for ticket in filtered_tickets:
@@ -213,13 +223,14 @@ class DisplayController:
             i += 1
 
         headers = [
-            "ID", "Code term", "Owner", "Movie", "Projection term date", "Start time",
-            "End time", "Seat label", "Status", "Ticket date"
+            "ID", "kod termina", "vlasnik", "film", "datum termina projekcije", "vreme početka",
+            "vreme završetka", "oznaka sedišta", "status", "datum karte"
         ]
         table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
 
-    def display_sold_tickets_by_projection_term_date(self, filtered_tickets):
+    @staticmethod
+    def display_sold_tickets_by_projection_term_date(filtered_tickets):
         ticket_data = []
         i = 1
         for ticket in filtered_tickets:
@@ -233,15 +244,16 @@ class DisplayController:
             ])
             i += 1
         headers = [
-            "ID", "Code term", "Owner", "Movie", "Projection term date", "Start time",
-            "End time", "Seat label", "Status", "Ticket date"
+            "ID", "kod termina", "vlasnik", "film", "datum termina projekcije", "vreme početka",
+            "vreme završetka", "oznaka sedišta", "status", "datum karte"
         ]
         table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
 
         pass
 
-    def display_sold_tickets_by_date_and_sellperson(self, filtered_tickets):
+    @staticmethod
+    def display_sold_tickets_by_date_and_sellperson(filtered_tickets):
         sold_ticket_data = []
         i = 1
         for sold_ticket in filtered_tickets:
@@ -256,8 +268,9 @@ class DisplayController:
                 sold_ticket.price
             ])
         headers = [
-            "ID", "Sellperson", "Code term", "Owner", "Movie", "Projection term date", "Start time",
-            "End time", "Seat label", "Status", "Ticket date", "Price"
+            "ID", "prodavac", "kôd termina", "vlasnik", "film", "datum termina projekcije", "vreme početka",
+            "vreme završetka", "oznaka sedišta", "status", "datum karte", "cena"
+
         ]
         table = tabulate(sold_ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
@@ -269,7 +282,7 @@ class DisplayController:
         for sold_ticket in filtered_tickets:
             total_price += float(sold_ticket.price)
         ticket_data = [total_quantity, total_price]
-        headers = ["Ukupan broj", "Ukupna cena"]
+        headers = ["ukupan broj", "ukupna cena"]
         table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
 
@@ -280,7 +293,7 @@ class DisplayController:
         for sold_ticket in filtered_tickets:
             total_price += float(sold_ticket.price)
         ticket_data = [total_quantity, total_price]
-        headers = ["Ukupan broj", "Ukupna cena"]
+        headers = ["ukupan broj", "ukupna cena"]
         table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
 
@@ -292,7 +305,7 @@ class DisplayController:
             total_price += float(sold_ticket.price)
 
         sold_ticket_data.append([movie_title, total_price])
-        headers = ["Movie title", "Total price"]
+        headers = ["naziv filma", "ukupna cena"]
         table = tabulate(sold_ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
 
@@ -304,17 +317,18 @@ class DisplayController:
             total_price += float(sold_ticket.price)
         total_count = len(filtered_tickets)
         sold_ticket_data.append([sellperson, day, total_count, total_price])
-        headers = ["Prodavac", "Dan", "Ukupan broj", "Ukupna cena"]
+        headers = ["prodavac", "dan", "ukupan broj", "ukupna cena"]
         table = tabulate(sold_ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
 
     @staticmethod
     def sold_tickets_for_each_sellperson_in_last_30_days(sold_tickets_data):
-        headers = ["ID", "Prodavac", "Ukupna cena", "Ukupan broj"]
+        headers = ["ID", "prodavac", "ukupna cena", "ukupan broj"]
         table = tabulate(sold_tickets_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
 
-    def display_reserved_tickets_for_user(self, user_reserved_ticket):
+    @staticmethod
+    def display_reserved_tickets_for_user(user_reserved_ticket):
         reserved_ticket_data = []
         i = 0
         for ticket in user_reserved_ticket:
@@ -324,11 +338,13 @@ class DisplayController:
                                          ticket.projection_term.movie_projection.start_time,
                                          ticket.projection_term.movie_projection.end_time,
                                          ticket.seat_label])
-        headers = ["ID", "Projection term code", "Movie", "Date", "Start time", "End time", "Seat label"]
+        headers = ["ID", "kod termina projekcije", "film", "datum", "vreme početka", "vreme završetka",
+                   "oznaka sedišta"]
         table = tabulate(reserved_ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         print(table)
 
-    def display_all_tickets(self):
+    @staticmethod
+    def display_all_tickets():
         ticket_controller = TicketController()
         ticket_controller.load_tickets()
         list_of_tickets = ticket_controller.list_of_tickets
@@ -344,8 +360,8 @@ class DisplayController:
             i += 1
 
         headers = [
-            "ID", "Code term", "Owner", "Movie", "Date", "Start time",
-            "End time", "Seat label", "Status"
+            "ID", "kod termina", "vlasnik", "film", "datum",
+            "vreme početka", "vreme završetka", "oznaka sedišta", "status"
         ]
 
         print(tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
@@ -357,7 +373,7 @@ class DisplayController:
         for sold_ticket in filtered_tickets:
             total_price += float(sold_ticket.price)
         ticket_data = [total_quantity, total_price]
-        headers = ["Ukupan broj", "Ukupna cena"]
+        headers = ["ukupan broj", "ukupna cena"]
         table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
 
@@ -368,6 +384,40 @@ class DisplayController:
         for sold_ticket in filtered_tickets:
             total_price += float(sold_ticket.price)
         ticket_data = [total_quantity, total_price]
-        headers = ["Ukupan broj", "Ukupna cena"]
+        headers = ["ukupan broj", "ukupna cena"]
         table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
+
+    @staticmethod
+    def display_projections():
+        movie_projection_controller = MovieProjectionController()
+        movie_projection_controller.load_projections()
+        projection_data = []
+        i = 0
+        for projection in movie_projection_controller.list_of_projections:
+            i += 1
+            projection_data.append([i, projection.projection_code, projection.hall, projection.start_time,
+                                    projection.end_time, projection.projection_days, projection.movie,
+                                    projection.ticket_price])
+        headers = ["ID", "kod projekcije", "kod sale", "vreme početka",
+                   "vreme kraja", "dani projekcije", "film", "cena karte"]
+        table = tabulate(projection_data, headers=headers, tablefmt="fancy_grid", numalign="center")
+        return table
+
+    @staticmethod
+    def display_cinema_hall(hall):
+        hall_data = [hall.hall_code, hall.hall_name if hall.hall_name else "",
+                     hall.num_rows, ", ".join(hall.seat_labels)]
+        headers = ["kod sale", "ime sale", "broj redova", "oznake sedišta"]
+        table = tabulate(hall_data, headers=headers, tablefmt="fancy_grid", numalign="center")
+        print(table)
+
+    @staticmethod
+    def display_movie(self):
+        movie_data = [self.title, self.genre, self.duration, self.director, self.main_roles, self.country_of_origin,
+                      self.release_year]
+        headers = ["naziv", "žanr", "trajanje", "režiser", "glavne uloge", "država" "godina"]
+        table = tabulate(movie_data, headers=headers, tablefmt="grid")
+        print(table)
+        print()
+        print("\n".join(textwrap.wrap(self.description, width=60)))

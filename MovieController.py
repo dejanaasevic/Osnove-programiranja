@@ -1,8 +1,5 @@
-from datetime import datetime, timedelta
-
-from tabulate import tabulate
 from Movie import Movie
-from MovieCriterion import MovieCriterion
+from MovieProjection import MovieProjection
 from MovieProjectionController import MovieProjectionController
 
 movie_projection_controller = MovieProjectionController()
@@ -15,17 +12,6 @@ def save_movie(movie):
         file.write(f"{movie.title}|{movie.genre}|{movie.duration}|{movie.director}|{movie.main_roles}|"
                    f"{movie.country_of_origin}|"f"{movie.release_year}|{movie.description}\n")
 
-
-def calculate_new_ending(time, duration):
-    start_time = datetime.strptime(time, "%H:%M")
-    end_time = start_time + timedelta(minutes=int(duration))
-
-    minutes = end_time.minute
-    if minutes > 30:
-        end_time = end_time.replace(minute=0, hour=end_time.hour+1)
-    elif minutes < 30 and minutes != 0:
-        end_time = end_time.replace(minute=30)
-    return end_time.strftime("%H:%M")
 
 def update_movie_in_file(status, file_movie, updated_movie):
     with open('movies.txt', 'r') as file:
@@ -57,7 +43,7 @@ def update_movie_in_file(status, file_movie, updated_movie):
         with open('projections.txt', 'w') as file:
             for line in lines:
                 data = line.strip().split('|')
-                new_ending_time = calculate_new_ending(data[2], updated_movie.duration)
+                new_ending_time = MovieProjection.calculate_new_ending(data[2], updated_movie.duration)
                 if data[5] == file_movie.title:
                     updated_line = "|".join([
                         data[0], data[1], data[2], new_ending_time, data[4], updated_movie.title, data[6]

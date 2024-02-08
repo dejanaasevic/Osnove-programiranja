@@ -121,4 +121,32 @@ class ValidationController:
         pattern = r'^[A-Z][a-zA-Z]*(?:[\s,]+[A-Z][a-zA-Z]*)*$'
         return bool(re.match(pattern, name))
 
+    @staticmethod
+    def movie_projection_valid_code(input_string):
+        pattern = r"^\d{4}$"
+        return bool(re.match(pattern, input_string))
 
+    @staticmethod
+    def movie_projection_valid_day_input(projection_days):
+        pattern = r"^\b(?:Ponedeljak|Utorak|Sreda|Četvrtak|Petak|Subota|Nedelja)(?:,\s*\b(?:Ponedeljak|Utorak|Sreda|Četvrtak|Petak|Subota|Nedelja))*\b$"
+        return bool(re.match(pattern, projection_days))
+
+    @staticmethod
+    def movie_projection_valid_price(price):
+        pattern = r"^\d+\.\d{2}$"
+        return bool(re.match(pattern, price))
+
+    @staticmethod
+    def cinema_hall_valid_name(cinema_hall_name):
+        pattern = r"^[A-Z][a-zA-Z0-9\s]*$"
+        return bool(re.match(pattern, cinema_hall_name))
+
+    @staticmethod
+    def cinema_hall_valid_num_rows(num_rows):
+        pattern = r"^[1-9]\d*$"
+        return bool(re.match(pattern, num_rows))
+
+    @staticmethod
+    def cinema_hall_valid_seat_labels(seat_labels):
+        pattern = r"^[A-Z](,[A-Z])*$"
+        return bool(re.match(pattern, seat_labels))

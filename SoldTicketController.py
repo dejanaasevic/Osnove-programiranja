@@ -70,3 +70,25 @@ class SoldTicketController:
                 self.list_of_sold_tickets.remove(sold_ticket)
                 return True
         return False
+
+    @staticmethod
+    def update_sold_ticket_in_file(file_ticket, updated_ticket):
+        with open('sold_tickets.txt', 'r') as file:
+            lines = file.readlines()
+        with open('sold_tickets.txt', 'w') as file:
+            for line in lines:
+                sold_ticket_info = line.strip().split('|')
+                ticket_code = sold_ticket_info[2] + '|' + sold_ticket_info[3]
+                if (sold_ticket_info[1] == file_ticket.owner and
+                        ticket_code == file_ticket.projection_term.code and
+                        sold_ticket_info[4] == file_ticket.seat_label and
+                        sold_ticket_info[5] == file_ticket.ticket.date
+                ):
+                    formatted_date = updated_ticket.date.strftime('%d.%m.%Y.')
+                    updated_line = "|".join([
+                        sold_ticket_info[0], updated_ticket.owner, updated_ticket.projection_term.code,
+                        updated_ticket.seat_label, formatted_date, str(updated_ticket.status), sold_ticket_info[7]
+                    ]) + "\n"
+                file.write(updated_line)
+            else:
+                file.write(line)

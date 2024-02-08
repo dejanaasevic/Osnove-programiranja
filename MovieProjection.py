@@ -1,6 +1,7 @@
-import re
+from datetime import datetime, timedelta
+from DisplayController import DisplayController
 
-from tabulate import tabulate
+display_controller = DisplayController()
 
 
 class MovieProjection:
@@ -13,43 +14,14 @@ class MovieProjection:
         self.movie = movie
         self.ticket_price = ticket_price
 
-    def display_movie_projection_staro(self):
-        print(f"Projection Code: {self.projection_code}\nHall: {self.hall.hall_code}\nStart Time: {self.start_time}\n"
-              f"End Time: {self.end_time}\nProjection Days: {self.projection_days}\nMovie: {self.movie}\n"
-              f"Ticket Price: {self.ticket_price}")
-
-    def display_movie_projection(self):
-        start_time_str = self.start_time.strftime("%H:%M")
-        end_time_str = self.end_time.strftime("%H:%M")
-        movie_projection_data = [
-            ["Projection Code", self.projection_code],
-            ["Hall", self.hall.hall_code],
-            ["Start Time", start_time_str],
-            ["End Time", end_time_str],
-            ["Projection Days", self.projection_days],
-            ["Movie", self.movie],
-            ["Ticket Price", self.ticket_price]
-        ]
-        table = tabulate(movie_projection_data, headers=["Attribute", "Information"], tablefmt="grid")
-        print(table)
     @staticmethod
-    def valid_time_format(time_string):
-        pattern = r"^(?:[01]\d|2[0-3]):[0-5]\d$"
-        return bool(re.match(pattern, time_string))
+    def calculate_new_ending(time, duration):
+        start_time = datetime.strptime(time, "%H:%M")
+        end_time = start_time + timedelta(minutes=int(duration))
 
-    @staticmethod
-    def valid_code(input_string):
-        pattern = r"^\d{4}$"
-        return bool(re.match(pattern, input_string))
-
-    @staticmethod
-    def valid_day_input(projection_days):
-        pattern = r"^\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)(?:,\s*\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday))*\b$"
-        return bool(re.match(pattern, projection_days))
-
-    @staticmethod
-    def valid_price(price):
-        pattern = r"^\d+\.\d{2}$"
-        return bool(re.match(pattern, price))
-
-
+        minutes = end_time.minute
+        if minutes > 30:
+            end_time = end_time.replace(minute=0, hour=end_time.hour + 1)
+        elif minutes < 30 and minutes != 0:
+            end_time = end_time.replace(minute=30)
+        return end_time.strftime("%H:%M")

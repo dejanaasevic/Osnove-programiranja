@@ -1,15 +1,7 @@
 from datetime import datetime
-from MovieProjection import MovieProjection
 from MovieProjectionTerm import MovieProjectionTerm
 from MovieProjectionController import MovieProjectionController
 from CinemaHallController import CinemaHallController
-
-
-def save_projection(movie_projection_term):
-    with open('projectionterms.txt', 'a') as file:
-        projection_term_info = f"{movie_projection_term.code}\n"
-        file.write(projection_term_info)
-
 
 projection_controller = MovieProjectionController()
 projection_controller.load_projections()
@@ -17,6 +9,12 @@ list_of_projections = projection_controller.list_of_projections
 cinema_controller = CinemaHallController()
 cinema_controller.load_cinema_halls()
 list_of_halls = cinema_controller.list_of_cinema_halls
+
+
+def save_projection(movie_projection_term):
+    with open('projectionterms.txt', 'a') as file:
+        projection_term_info = f"{movie_projection_term.code}\n"
+        file.write(projection_term_info)
 
 
 def remove_projection_term_from_file(projection_term):
@@ -120,4 +118,4 @@ class MovieProjectionTermController:
                 if projection_term.index > max_index:
                     max_index = projection_term.index
 
-            return  max_index+1
+            return max_index + 1

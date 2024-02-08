@@ -245,7 +245,7 @@ class ReportController:
         print("2. NE")
         choice = input("Unesite opciju: ")
         if int(choice) == 1:
-            with open('sold_tickets_for_each_sellperson_in_last_30_days.txt', 'a', encoding='utf-8') as file:
+            with open('report_sold_tickets_for_each_sellperson_in_last_30_days', 'a', encoding='utf-8') as file:
                 file.write(
                     f"Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakogprodavca) u poslednjih 30 dana.\n")
                 file.write(f"period: {start_date.date()} - {datetime.now().date()}")
