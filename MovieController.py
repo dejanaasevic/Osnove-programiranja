@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from tabulate import tabulate
 from Movie import Movie
 from MovieCriterion import MovieCriterion
@@ -13,6 +15,17 @@ def save_movie(movie):
         file.write(f"{movie.title}|{movie.genre}|{movie.duration}|{movie.director}|{movie.main_roles}|"
                    f"{movie.country_of_origin}|"f"{movie.release_year}|{movie.description}\n")
 
+
+def calculate_new_ending(time, duration):
+    start_time = datetime.strptime(time, "%H:%M")
+    end_time = start_time + timedelta(minutes=int(duration))
+
+    minutes = end_time.minute
+    if minutes > 30:
+        end_time = end_time.replace(minute=0, hour=end_time.hour+1)
+    elif minutes < 30 and minutes != 0:
+        end_time = end_time.replace(minute=30)
+    return end_time.strftime("%H:%M")
 
 def update_movie_in_file(status, file_movie, updated_movie):
     with open('movies.txt', 'r') as file:
@@ -35,17 +48,19 @@ def update_movie_in_file(status, file_movie, updated_movie):
 
     if status:
         for projection in list_of_projections:
-            if projection.movie.title == file_movie.title:
+            if projection.movie.title == file_movie.title and projection.movie.duration == file_movie.duration:
                 projection.movie.title = updated_movie.title
+                projection.movie.duration = updated_movie.duration
 
         with open('projections.txt', 'r') as file:
             lines = file.readlines()
         with open('projections.txt', 'w') as file:
             for line in lines:
                 data = line.strip().split('|')
+                new_ending_time = calculate_new_ending(data[2], updated_movie.duration)
                 if data[5] == file_movie.title:
                     updated_line = "|".join([
-                        data[0], data[1], data[2], data[3], data[4], updated_movie.title, data[6]
+                        data[0], data[1], data[2], new_ending_time, data[4], updated_movie.title, data[6]
                     ]) + "\n"
                     file.write(updated_line)
                 else:
@@ -103,7 +118,7 @@ class MovieController:
                     and movie.main_roles == file_movie.main_roles and movie.country_of_origin == file_movie.country_of_origin
                     and movie.release_year == file_movie.country_of_origin and movie.description == file_movie.description):
 
-                status = movie.title != updated_movie.title
+                status = movie.title != updated_movie.title or int(movie.duration) != int(updated_movie.duration)
 
                 movie.title = updated_movie.title
                 movie.genre = updated_movie.genre

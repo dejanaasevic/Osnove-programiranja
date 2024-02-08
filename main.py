@@ -167,6 +167,12 @@ def display_menu_for_registered_menager():
         print("8. Višestruka pretraga filmova")
         print("9. Pretraga termina bioskopskih projekcija")
         print("10. Izvestaji")
+        print("11. Registracija filma")
+        print("12. Izmena filma")
+        print("13. Brisanje filma")
+        print("14. Registracija bioskopske projekcije")
+        print("15. Izmena bioskopske projekcije")
+        print("16. Brisanje bioskopske projekcije")
         choice = input("Unesite broj opcije: ")
         if choice == "1":
             log_out()
@@ -188,6 +194,18 @@ def display_menu_for_registered_menager():
             search_movie_projection_terms()
         elif choice == "10":
             create_report()
+        elif choice == "11":
+            registration_new_movie()
+        elif choice == "12":
+            update_movie()
+        elif choice == "13":
+            remove_movie()
+        elif choice == "14":
+            registration_new_movie_projection()
+        elif choice == "15":
+            update_projection()
+        elif choice == "16":
+            remove_projection()
         else:
             print("Nevažeća opcija. Molimo pokušajte ponovo.")
 
@@ -195,56 +213,47 @@ def display_menu_for_registered_menager():
 def display_menu_for_admin():
     print("MENI ADMINA")
     print("___________")
-    print("1. Registracija menadžera")
-    print("2. Registracija prodavca")
-    print("3. Registracija bioskopske projekcije")
-    print("4. Registracija sale za projekcije")
+    print("1. Odjava sa sistema: ")
+    print("2. Izlaz iz aplikacije")
+    print("3. Registracija novih prodavaca")
+    print("4. Registracija novih menadžera")
     print("5. Registracija filma")
-    print("6. Registracija termin bioskopske projekcije")
-    print("7. Izmena filma")
-    print("8. Brisanje filma")
+    print("6. Izmena filma")
+    print("7. Brisanje filma")
+    print("8. Registracija bioskopske projekcije")
     print("9. Izmena bioskopske projekcije")
-    print("10.Brisanje bioskopske projekcije")
+    print("10. Brisanje bioskopske projekcije")
+    print("11. Registracija sale za projekcije")
+    print("12. Registracija termina bioskopske projekcije")
     choice = input("Unesi broj opcije: ")
 
     if choice == "1":
-        registrate_new_menager()
+        log_out()
     elif choice == "2":
-        registrate_new_sellperson()
+        exit_application()
     elif choice == "3":
-        registration_new_movie_projection()
+        registrate_new_sellperson()
     elif choice == "4":
-        registration_new_cinemahall()
+        registrate_new_menager()
     elif choice == "5":
         registration_new_movie()
     elif choice == "6":
+        update_movie()
+    elif choice == "7":
+        remove_movie()
+    elif choice == "8":
+        registration_new_movie_projection()
+    elif choice == "9":
+        update_projection()
+    elif choice == "10":
+        remove_projection()
+    elif choice == "11":
+        registration_new_cinemahall()
+    elif choice == "12":
         registration_new_movie_projection_term()
     else:
         print("Nevažeća opcija. Molimo pokušajte ponovo.")
 
-
-def display_list(list):
-    if not list:
-        print("Nema pronađenih filmova")
-    else:
-        i = 1
-        for movie in list:
-            print(f"FILM {i}")
-            movie.display_movie()
-            print()
-            i += 1
-
-
-def display_projection_terms_list(list):
-    if not list:
-        print("Nema ponuđenih termina projekcija")
-    else:
-        i = 1
-        for projection_term in list:
-            print(projection_term.code)
-            print(f"TERMIN PROJEKCIJE {i}")
-            projection_term.display_movie_projection_term()
-            i += 1
 
 
 def display_projection_(list):
@@ -282,25 +291,6 @@ def display_reserved_tickets_for_user():
 
 def display_reserved_tickets_for_sellperson():
     display_controller.display_reserved_tickets()
-
-
-def display_reserved_tickets_for_sellperson_staro():
-    i = 1
-    for ticket in ticket_controller.list_of_tickets:
-        print(f"REZERVACIJA {i}")
-        print(f"Kod termina projekcije: {ticket.projection_term.code}\n"
-              f"Vlasnik: {ticket.owner}\n"
-              f"Film:{ticket.projection_term.movie_projection.movie}\n"
-              f"Datum:{ticket.projection_term.date}\n"
-              f"Vreme početka: {ticket.projection_term.movie_projection.start_time}\n"
-              f"Vreme kraja: {ticket.projection_term.movie_projection.end_time}\n"
-              f"Oznaka sedišta: {ticket.seat_label}\n")
-        if ticket.status == "1":
-            print(f"Status: rezervisana karta")
-        else:
-            print(f"Status: prodata karta\n")
-        i += 1
-        print()
 
 
 def login():
@@ -457,37 +447,37 @@ def registration():
 
 
 def registrate_new_sellperson():
+    print("REGISTRACIJA NOVOG PRODAVCA")
+    print("___________________________")
     while True:
         print("Za povratak na meni unesite: -1")
         username = input("Unesite korisničko ime: ")
+
         if username == "-1":
             display_user_menu()
             return
-        elif not User.valid_username(username):
+        elif not validation_controller.user_valid_username(username):
             print("Nevažeće korisničko ime. Molimo pokušajte ponovo.")
             continue
 
         password = input("Unesite lozinku: ")
         if password == "-1":
-            display_user_menu()
-            return
-        elif not User.valid_password(password):
+            continue
+        elif not validation_controller.user_valid_password(password):
             print("Nevažeća lozinka. Molimo pokušajte ponovo.")
             continue
 
         name = input("Unesite ime: ")
         if name == "-1":
-            display_user_menu()
-            return
-        elif not User.valid_name(name):
+            continue
+        elif not validation_controller.user_valid_name(name):
             print("Nevažeće ime. Molimo pokušajte ponovo.")
             continue
 
         surname = input("Unesite prezime: ")
         if surname == "-1":
-            display_user_menu()
-            return
-        elif not User.valid_surname(surname):
+            continue
+        elif not validation_controller.user_valid_surname(surname):
             print("Nevažeće prezime. Molimo pokušajte ponovo.")
             continue
 
@@ -502,44 +492,44 @@ def registrate_new_sellperson():
 
 
 def registrate_new_menager():
+    print("REGISTRACIJA NOVOG MENADŽERA")
+    print("____________________________")
     while True:
         print("Za povratak na meni unesite: -1")
         username = input("Unesite korisničko ime: ")
         if username == "-1":
             display_user_menu()
             return
-        elif not User.valid_username(username):
+        elif not validation_controller.user_valid_username(username):
             print("Nevažeće korisničko ime. Molimo pokušajte ponovo.")
             continue
 
         password = input("Unesite lozinku: ")
         if password == "-1":
-            display_user_menu()
-            return
-        elif not User.valid_password(password):
+            continue
+        elif not validation_controller.user_valid_password(password):
             print("Nevažeća lozinka. Molimo pokušajte ponovo.")
             continue
 
         name = input("Unesite ime: ")
         if name == "-1":
-            display_user_menu()
-            return
-        elif not User.valid_name(name):
+            continue
+        elif not validation_controller.user_valid_name(name):
             print("Nevažeće ime. Molimo pokušajte ponovo.")
             continue
 
         surname = input("Unesite prezime: ")
         if surname == "-1":
-            display_user_menu()
-            return
-        elif not User.valid_surname(surname):
+            continue
+        elif not validation_controller.user_valid_surname(surname):
             print("Nevažeće prezime. Molimo pokušajte ponovo.")
             continue
         role = 3
+
         registrate_new_sellperson = User(username, password, name, surname, role)
         if user_controller.add_user(registrate_new_sellperson):
-            print("Uspešno ste registrovali novog menadzera")
-            display_user_menu()
+            print("Uspešno ste registrovali novog menadžera.")
+            continue
         else:
             print("Registracija nije uspela. Molimo pokušajte ponovo.")
 
@@ -888,47 +878,47 @@ def registration_new_movie():
         title = input("Unesite naziv filma: ")
         if title == "-1":
             display_user_menu()
-        elif not Movie.valid_name(title):
+        elif not validation_controller.movie_valid_name(title):
             print("Nevažeći naziv filma. Molimo pokušajte ponovo.")
             continue
         genre = input("Unesite žanr filma: ")
         if genre == "-1":
             continue
-        elif not Movie.valid_genre(genre):
+        elif not validation_controller.movie_valid_genre(genre):
             print("Nevažeći žanr. Molimo pokušajte ponovo.")
             continue
         duration = input("Unesite trajanje filma (u minutama): ")
         if duration == "-1":
             continue
-        elif not Movie.valid_duration(duration):
+        elif not validation_controller.movie_valid_duration(duration):
             print("Nevažeće trajanje filma. Molimo pokušajte ponovo.")
             continue
 
         director = input("Unesite ime reditelja: ")
         if director == "-1":
             continue
-        elif not Movie.valid_person_name(director):
+        elif not validation_controller.movie_valid_director(director):
             print("Nevažeće ime reditelja. Molimo pokušajte ponovo.")
             continue
 
         main_roles = input("Unesite glavne uloge: ")
         if main_roles == "-1":
             continue
-        elif not Movie.valid_main_roles(main_roles):
+        elif not validation_controller.movie_valid_main_roles(main_roles):
             print("Nevažeće ime glumca. Molimo pokušajte ponovo.")
             continue
 
         country_of_origin = input("Unesite zemlju porekla filma: ")
         if country_of_origin == "-1":
             continue
-        elif not Movie.valid_country_name(country_of_origin):
+        elif not validation_controller.movie_valid_country_name(country_of_origin):
             print("Nevažeća zemlja porekla filma. Molimo pokušajte ponovo.")
             continue
 
         release_year = input("Unesite godinu izdanja filma: ")
         if release_year == "-1":
             continue
-        elif not Movie.valid_year(release_year):
+        elif not validation_controller.movie_valid_year(release_year):
             print("Nevažeća godina objave filma. Molimo pokušajte ponovo.")
             continue
 
@@ -948,7 +938,7 @@ def registration_new_movie():
 def update_movie():
     while True:
         display_controller.display_movies()
-        choice = input("Unesite opciju: ")
+        choice = input("Unesite ID filma: ")
         if choice == "-1":
             display_user_menu()
             return
@@ -968,19 +958,21 @@ def update_movie():
             print("5. Država porekla")
             print("6. Godina")
             print("7. Opis")
+            print("8. Trajanje")
+            print()
             choice = input("Unesite opciju: ")
 
             if choice == "1":
                 new_title = input("Unesite nov naziv:")
                 if new_title == "-1":
                     continue
-                elif not Movie.valid_name(new_title):
+                elif not validation_controller.movie_valid_name(new_title):
                     print("Nevazece ime. Molimo pokusajte ponovo.")
                     continue
                 else:
                     movie.title = new_title
                     if movie_controller.update_movie(movie_copy, movie):
-                        print("Uspesno ste izmenili ime")
+                        print("Uspesno ste izmenili ime.")
                         continue
 
             if choice == "2":
@@ -988,7 +980,7 @@ def update_movie():
                 new_genres = input("Unesite nove žanrove: ")
                 if new_genres == "-1":
                     continue
-                elif Movie.valid_genre(new_genres):
+                elif validation_controller.movie_valid_genre(new_genres):
                     print("Nevažeći žanrovi. Molimo pokušajte ponovo.")
                     continue
                 else:
@@ -1001,7 +993,7 @@ def update_movie():
                 new_directors = input("Unesite nove režisere: ")
                 if new_directors == "-1":
                     continue
-                elif not Movie.valid_person_name(new_directors):
+                elif not validation_controller.movie_valid_director(new_directors):
                     print("Nevažće ime. Molimo pokušajte ponovo")
                     continue
                 else:
@@ -1014,7 +1006,7 @@ def update_movie():
                 new_actors = input("Unesite nove glumce: ")
                 if new_actors == "-1":
                     continue
-                elif not Movie.valid_person_name(new_actors):
+                elif not validation_controller.movie_valid_main_roles(new_actors):
                     print("Nevažće ime. Molimo pokušajte ponovo")
                     continue
                 else:
@@ -1027,7 +1019,7 @@ def update_movie():
                 new_country = input("Unesite novu državu porekla: ")
                 if new_country == "-1":
                     continue
-                elif not Movie.valid_country_name(new_country):
+                elif not validation_controller.movie_valid_country_name(new_country):
                     print("Nevažće ime. Molimo pokušajte ponovo")
                     continue
                 else:
@@ -1040,8 +1032,8 @@ def update_movie():
                 new_year = input("Unesite novu godinu: ")
                 if new_year == "-1":
                     continue
-                elif not Movie.valid_year(new_year):
-                    print("Nevažća godina. Molimo pokušajte ponovo")
+                elif not validation_controller.movie_valid_year(new_year):
+                    print("Nevažća godina. Molimo pokušajte ponovo.")
                     continue
                 else:
                     movie.release_year = new_year
@@ -1058,6 +1050,21 @@ def update_movie():
                     if movie_controller.update_movie(movie_copy, movie):
                         print("Uspešno ste izmenili opis.")
                         continue
+
+            if choice == "8":
+                new_duration = input("Unesite novo trajanje u minutima: ")
+                if new_duration == "-1":
+                    continue
+                elif not validation_controller.movie_valid_duration(new_duration):
+                    print("Nevažeče trajanje. Molimo pokušajte ponovo.")
+                    continue
+                else:
+                    movie.duration = new_duration
+                    if movie_controller.update_movie(movie_copy, movie):
+                        print("Uspešno ste izmenili žanrove.")
+                        continue
+
+
 
 
 def remove_movie():
@@ -2068,7 +2075,7 @@ def sale_of_reserved_tickets():
 
         display_controller.display_filtered_ticket(tickets)
         print()
-        reservation_choice = int(input("Unesi broj izabrane rezervacije: "))
+        reservation_choice = int(input("Unesi ID izabrane rezervacije: "))
         if reservation_choice == -1:
             continue
         elif not 0 < reservation_choice <= len(tickets):
@@ -2100,7 +2107,7 @@ def change_ticket_information():
         seat_label = None
         display_controller.display_projection_term_codes()
         print()
-        projection_term_choice = int(input("Unesite broj izabranog termina projekcije: "))
+        projection_term_choice = int(input("Unesite ID izabranog termina projekcije: "))
         if projection_term_choice == -1:
             display_user_menu()
             return
@@ -2110,19 +2117,24 @@ def change_ticket_information():
         else:
             projection_term = movie_projection_term_controller.list_of_projection_terms[projection_term_choice - 1]
 
-        owner_choice = input("Unesite korisnika: ")
+        owner_choice = input("Unesite ime i prezime za neregistrovanog korisnika"
+                             " ili username za registrovanog korisnika (username mora da počne sa @)")
         if owner_choice == "-1":
             continue
-        # elif not Movie.valid_main_roles(user_choice):
-        #    print("Nevažeće ime. Molimo pokušajte ponovo")
-        #    continue
+        elif owner_choice.startswith('@'):
+            username = user_controller.get_user(owner_choice[1:])
+            if username is None:
+                print("Korisničko ime ne postoji. Molimo pokušajte ponovo.")
+                continue
+            else:
+                owner = owner_choice
         else:
             owner = owner_choice
 
         seat_label_choice = input("Unesite oznaku sedišta: ")
         if seat_label_choice == "-1":
             continue
-        elif not CinemaHall.valid_seat_label(seat_label_choice):
+        elif not validation_controller.cinema_hall_valid_seat_label(seat_label_choice):
             print("Nevažeća oznaka sedišta. Molimo pokušajte ponovo.")
             continue
         else:
@@ -2214,7 +2226,6 @@ def change_ticket_information():
                                         row = label[0]
                                         seat = label[1]
                                         hall.reserve_seat(row, seat)
-                                        reserve_seats = True
 
                                 hall.display_seating_plan()
 
@@ -2222,7 +2233,7 @@ def change_ticket_information():
                                     "Unesite oznaku slobodnog sedista (prvo se unosi broj reda pa oznaka sedista): ")
                                 if choice == "-1":
                                     continue
-                                elif not CinemaHall.valid_seat_label(seat_choice):
+                                elif not validation_controller.cinema_hall_valid_seat_label(seat_choice):
                                     continue
                                 else:
                                     seat_taken = False
@@ -2233,6 +2244,10 @@ def change_ticket_information():
                                     if not seat_taken:
                                         row = seat_choice[0]
                                         seat = seat_choice[1]
+                                        if (not (1 <= int(seat_choice[0]) <= int(hall.num_rows)) and
+                                                seat_choice[1] not in hall.seat_labels_array):
+                                            print("Sedište ne postoji. Molimo pokušajte kasnije.")
+                                            continue
                                         if hall.reserve_seat(row, seat):
                                             current_ticket.seat_label = seat_choice
                                             current_ticket.projection_term = \
@@ -2241,23 +2256,23 @@ def change_ticket_information():
                                             current_ticket_copy.owner = current_ticket.owner
                                             update_ticket_in_file(current_ticket_copy, current_ticket)
                             else:
-                                print("Uneli ste nevažeću opciju. Molimo pokušajte ponovo")
+                                print("Uneli ste nevažeću opciju. Molimo pokušajte ponovo.")
                                 continue
                 elif choice == "2":
                     owner_choice = input("Unesite ime i prezime za neregistrovanog korisnika"
-                                         " ili username za registrovanog korisnika (username mora da počne sa @)")
+                                         " ili username za registrovanog korisnika (username mora da počinje sa @): ")
                     if owner_choice == "-1":
                         continue
                     elif owner_choice.startswith('@'):
                         username = user_controller.get_user(owner_choice[1:])
                         if username is None:
-                            print("Korisničko ime ne postoji. Molimo pokušajte ponovo")
+                            print("Korisničko ime ne postoji. Molimo pokušajte ponovo.")
                             continue
                         else:
                             current_ticket.owner = owner_choice[1:]
                             update_ticket_in_file(current_ticket_copy, current_ticket)
                     else:
-                        if not Ticket.valid_name(owner_choice):
+                        if not validation_controller.user_valid_name(owner_choice):
                             print("Nevažeće ime. Molimo pokušajte kasnije.")
                             continue
                         else:
@@ -2280,15 +2295,14 @@ def change_ticket_information():
                             row = label[0]
                             seat = label[1]
                             hall.reserve_seat(row, seat)
-                            reserve_seats = True
 
                     hall.display_seating_plan()
 
                     seat_choice = input(
-                        "Unesite oznaku slobodnog sedista (prvo se unosi broj reda pa oznaka sedista): ")
+                        "Unesite oznaku slobodnog sedišta (prvo se unosi broj reda pa oznaka sedišta): ")
                     if choice == "-1":
                         continue
-                    elif not CinemaHall.valid_seat_label(seat_choice):
+                    elif not validation_controller.cinema_hall_valid_seat_label(seat_choice):
                         continue
                     else:
                         seat_taken = False
@@ -2299,6 +2313,10 @@ def change_ticket_information():
                         if not seat_taken:
                             row = seat_choice[0]
                             seat = seat_choice[1]
+                            if (not (1 <= int(seat_choice[0]) <= int(hall.num_rows)) and
+                                    seat_choice[1] not in hall.seat_labels_array):
+                                print("Sedište ne postoji. Molimo pokušajte kasnije.")
+                                continue
                             if hall.reserve_seat(row, seat):
                                 current_ticket.seat_label = seat_choice
                                 update_ticket_in_file(current_ticket_copy, current_ticket)
@@ -2337,24 +2355,27 @@ def create_report():
     print("_____________________")
     while True:
         print("1. Lista prodatih karata za odabran datum prodaje.")
-        print("2. Lista prodatih karata za odabran datum termina bioskopske projekcije")
+        print("2. Lista prodatih karata za odabran datum termina bioskopske projekcije.")
         print("3. Lista prodatih karata za odabran datum prodaje i odabranog prodavca.")
         print("4. Ukupan broj i ukupna cena prodatih karata za izabran dan (u nedelji) prodaje.")
         print("5. Ukupan broj i ukupna cena prodatih karata za izabran dan (u nedelji) održavanja projekcije.")
         print("6. Ukupna cena prodatih karata za zadati film u svim projekcijama.")
-        print("7. Ukupan broj i ukupna cena prodatih karata za izabran dan prodaje i odabranog prodavca")
+        print("7. Ukupan broj i ukupna cena prodatih karata za izabran dan prodaje i odabranog prodavca.")
         print("8. Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakog prodavca) u poslednjih 30 dana.")
+        print("9. Ukupan broj i ukupna cena prodatih karata za izabran dan (u prethodnoj nedelji) prodaje.")
+        print("10 .Ukupan broj i ukupna cena prodatih karata za izabran dan (u prethodnoj nedelji) održavanja projekcije.")
         choice = input("Unesi broj opcije: ")
 
         if choice == "-1":
             display_user_menu()
             return
+
         elif choice == "1":
             date_choice = input("Unesite datum prodaje karte:")
             if date_choice == "-1":
                 continue
-            elif not MovieProjectionTerm.valid_date_format(date_choice):
-                print("Nevažeći format datuma. Molimo pokušajte ponovo: ")
+            elif not validation_controller.projection_term_valid_date_format(date_choice):
+                print("Nevažeći format datuma. Molimo pokušajte ponovo. ")
                 continue
             else:
                 report_controller.sold_tickets_by_sale_date(date_choice)
@@ -2363,8 +2384,8 @@ def create_report():
             date_choice = input("Unesite datum termina projekcije karte:")
             if date_choice == "-1":
                 continue
-            elif not MovieProjectionTerm.valid_date_format(date_choice):
-                print("Nevažeći format datuma. Molimo pokušajte ponovo: ")
+            elif not validation_controller.projection_term_valid_date_format(date_choice):
+                print("Nevažeći format datuma. Molimo pokušajte ponovo. ")
                 continue
             else:
                 report_controller.sold_tickets_by_projection_term_date(date_choice)
@@ -2373,26 +2394,26 @@ def create_report():
             date_choice = input("Unesite datum prodaje karte: ")
             if date_choice == "-1":
                 continue
-            elif not MovieProjectionTerm.valid_date_format(date_choice):
-                print("Nevažeći format datuma. Molimo pokušajte ponovo: ")
+            elif not validation_controller.projection_term_valid_date_format(date_choice):
+                print("Nevažeći format datuma. Molimo pokušajte ponovo. ")
                 continue
 
-            sellperson_choice = input("Unesite korisnicko ime prodavca:")
+            sellperson_choice = input("Unesite korisnicko ime prodavca (treba da počinje sa @):")
             if sellperson_choice == "-1":
                 continue
-            elif not User.valid_username(sellperson_choice):
+            elif not validation_controller.user_valid_username(sellperson_choice[1:]):
                 print("Nevažeće korisničko ime. Molimo pokušajte ponovo.")
                 continue
             else:
                 sellperson = None
                 for user in user_controller.list_of_users:
-                    if user.username == sellperson_choice and user.role == "2":
+                    if user.username == sellperson_choice[1:] and user.role == "2":
                         sellperson = user
                 if sellperson is None:
-                    print("Nije pronadjen prodavac. Molimo pokusajte kasnije.")
+                    print("Nije pronađen prodavac. Molimo pokušajte kasnije.")
                     continue
                 else:
-                    report_controller.sold_tickets_by_date_and_sellperson(date_choice, sellperson_choice)
+                    report_controller.sold_tickets_by_date_and_sellperson(date_choice, sellperson_choice[1:])
 
         elif choice == "4":
             print("1. Ponedeljak")
@@ -2406,7 +2427,7 @@ def create_report():
             if day_choice == "-1":
                 continue
             elif not (1 <= int(day_choice) <= 7):
-                print("Nevažeći indeks. Molimo pokušajte kasnije.")
+                print("Nevažeći indeks. Molimo pokušajte ponovo.")
                 continue
             else:
                 report_controller.sold_tickets_by_sale_day(day_choice)
@@ -2430,7 +2451,7 @@ def create_report():
 
         elif choice == "6":
             display_controller.display_movies()
-            movie_choice = input("Unesitiste opciju: ")
+            movie_choice = input("Unesitiste ID filma: ")
             if movie_choice == "-1":
                 continue
             elif not (1 <= int(movie_choice) <= len(movie_controller.list_of_movies)):
@@ -2455,16 +2476,16 @@ def create_report():
                 print("Nevažeći indeks. Molimo pokušajte kasnije.")
                 continue
 
-            sellperson_choice = input("Unesite korisnicko ime prodavca:")
+            sellperson_choice = input("Unesite korisnicko ime prodavca  (treba da počinje sa @):")
             if sellperson_choice == "-1":
                 continue
-            elif not User.valid_username(sellperson_choice):
+            elif not validation_controller.user_valid_username(sellperson_choice[1:]):
                 print("Nevažeće korisničko ime. Molimo pokušajte ponovo.")
                 continue
             else:
                 sellperson = None
                 for user in user_controller.list_of_users:
-                    if user.username == sellperson_choice and user.role == "2":
+                    if user.username == sellperson_choice[1:] and user.role == "2":
                         sellperson = user
                 if sellperson is None:
                     print("Nije pronadjen prodavac. Molimo pokusajte kasnije.")
@@ -2474,6 +2495,41 @@ def create_report():
 
         elif choice == "8":
             report_controller.sold_tickets_for_each_sellperson_in_last_30_days()
+
+        elif choice == "9":
+            print("1. Ponedeljak")
+            print("2. Utorak")
+            print("3. Sreda")
+            print("4. Četvrtak")
+            print("5. Petak")
+            print("6. Subota")
+            print("7. Nedelja")
+            day_choice = input("Unesite opciju: ")
+            if day_choice == "-1":
+                continue
+            elif not (1 <= int(day_choice) <= 7):
+                print("Nevažeći indeks. Molimo pokušajte ponovo.")
+                continue
+            else:
+                report_controller.sold_tickets_by_sale_day_in_previous_week(day_choice)
+
+        elif choice == "10":
+            print("1. Ponedeljak")
+            print("2. Utorak")
+            print("3. Sreda")
+            print("4. Četvrtak")
+            print("5. Petak")
+            print("6. Subota")
+            print("7. Nedelja")
+            day_choice = input("Unesite opciju: ")
+            if day_choice == "-1":
+                continue
+            elif not (1 <= int(day_choice) <= 7):
+                print("Nevažeći indeks. Molimo pokušajte kasnije.")
+                continue
+            else:
+                report_controller.sold_tickets_by_projection_term_day_in_previous_week(day_choice)
+
 
 
 def main():

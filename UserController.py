@@ -66,9 +66,9 @@ class UserController:
     def update_user_in_list(self, updated_user):
         for user in self.list_of_users:
             if user.username == updated_user.username:
-                if (user_valid_password(updated_user.password)
-                        and user_valid_name(updated_user.name)
-                        and user_valid_surname(updated_user.surname)):
+                if (validation_controller.user_valid_password(updated_user.password)
+                        and validation_controller.user_valid_name(updated_user.name)
+                        and validation_controller.user_valid_surname(updated_user.surname)):
                     user.name = updated_user.name
                     user.surname = updated_user.surname
                     user.password = updated_user.password
