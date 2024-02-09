@@ -345,7 +345,6 @@ def change_personal_information():
                 current_user.name = new_name
                 if user_controller.update_user_in_list(current_user):
                     print('Uspešno ste izmenili ime.')
-                    current_user.display_user()
                 else:
                     print("Niste uspešno izmenili ime. Molimo pokušajte ponovo.")
 
@@ -360,7 +359,6 @@ def change_personal_information():
                 current_user.surname = new_surname
                 if user_controller.update_user_in_list(current_user):
                     print('Usepšno ste izmenili prezime.')
-                    current_user.display_user()
                 else:
                     print("Niste uspešno promenili prezime. Molimo pokušajte ponovo.")
 
@@ -375,7 +373,6 @@ def change_personal_information():
                 current_user.password = new_password
                 if user_controller.update_user_in_list(current_user):
                     print('Usepšno ste izmenili lozinku.')
-                    current_user.display_user()
                 else:
                     print("Niste uspešno promenili lozinku. Molimo polušajte ponovo.")
         else:
@@ -596,7 +593,7 @@ def registration_new_movie_projection():
             continue
 
         new_projection = MovieProjection(projection_code, hall, start_time, end_time,
-                                         projection_days, projection_movie, price)
+                                         projection_days, movie.title, price)
         if movie_projection_controller.add_projection(new_projection):
             print("Uspešno ste registrovali novu projekciju")
             display_user_menu()
@@ -951,7 +948,11 @@ def update_movie():
                     print("Nevazece ime. Molimo pokusajte ponovo.")
                     continue
                 else:
+                    print(movie_copy.title)
                     movie.title = new_title
+                    print(movie.title)
+                    print(movie_copy.title)
+
                     if movie_controller.update_movie(movie_copy, movie):
                         print("Uspesno ste izmenili ime.")
                         continue
@@ -961,10 +962,12 @@ def update_movie():
                 new_genres = input("Unesite nove žanrove: ")
                 if new_genres == "-1":
                     continue
-                elif validation_controller.movie_valid_genre(new_genres):
+                elif not validation_controller.movie_valid_genre(new_genres):
                     print("Nevažeći žanrovi. Molimo pokušajte ponovo.")
                     continue
                 else:
+                    print(movie.genre)
+                    print(new_genres)
                     movie.genre = new_genres
                     if movie_controller.update_movie(movie_copy, movie):
                         print("Uspešno ste izmenili žanrove.")

@@ -5,11 +5,9 @@ from CinemaHallController import CinemaHallController
 
 
 def save_projection(movie_projection):
-    start_time_str = movie_projection.start_time.strftime("%H:%M")
-    end_time_str = movie_projection.end_time.strftime("%H:%M")
-    with open('projections.txt', 'a') as file:
+    with open('projections.txt', 'a', encoding='utf-8') as file:
         projection_info = (f"{movie_projection.projection_code}|{movie_projection.hall.hall_code}"
-                           f"|{start_time_str}"f"|{end_time_str}|"
+                           f"|{movie_projection.start_time}"f"|{movie_projection.end_time}|"
                            f"{movie_projection.projection_days}|{movie_projection.movie}|"
                            f"{movie_projection.ticket_price}\n")
         file.write(projection_info)
@@ -21,7 +19,7 @@ list_of_halls = cinema_controller.list_of_cinema_halls
 
 
 def remove_projection_from_file(projection):
-    with open('projections.txt', 'r') as file:
+    with open('projections.txt', 'r',  encoding='utf-8') as file:
         lines = file.readlines()
     with open('projections.txt', 'w') as file:
         for line in lines:
@@ -35,9 +33,9 @@ def remove_projection_from_file(projection):
 
 
 def update_projection_in_file(file_projection, updated_projection):
-    with open('projections.txt', 'r') as file:
+    with open('projections.txt', 'r',  encoding='utf-8') as file:
         lines = file.readlines()
-    with open('projections.txt', 'w') as file:
+    with open('projections.txt', 'w',  encoding='utf-8') as file:
         for line in lines:
             data = line.strip().split('|')
             if (data[0] == file_projection.projection_code and
@@ -62,7 +60,7 @@ class MovieProjectionController:
         self.list_of_projections = []
 
     def load_projections(self):
-        with open('projections.txt', 'r') as file:
+        with open('projections.txt', 'r',  encoding='utf-8') as file:
             for line in file:
                 new_projection = line.strip().split('|')
                 for hall in list_of_halls:

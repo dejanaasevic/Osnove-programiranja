@@ -37,10 +37,9 @@ class ValidationController:
     @staticmethod
     def movie_valid_genre(genre_name):
         genres = [
-            "action", "adventure", "animation", "comedy", "crime", "documentary",
-            "drama", "fantasy", "horror", "mystery", "romance", "sci-fi",
-            "thriller", "western", "war", "biography", "music", "sports",
-            "superhero", "family", "teenage"
+            "akcija", "avantura", "animirani", "komedija", "krimi", "dokumentarni", "drama", "fantastika", "horor",
+            "misterija", "romantika", "fantastika", "triler", "vestern", "ratni", "biografski", "muzički",
+            "sportski", "superheroj", "porodični", "teenage"
         ]
 
         genre_name_array = genre_name.lower().split()
@@ -128,7 +127,7 @@ class ValidationController:
 
     @staticmethod
     def movie_projection_valid_day_input(projection_days):
-        pattern = r"^\b(?:Ponedeljak|Utorak|Sreda|Četvrtak|Petak|Subota|Nedelja)(?:,\s*\b(?:Ponedeljak|Utorak|Sreda|Četvrtak|Petak|Subota|Nedelja))*\b$"
+        pattern = r"^\b(?:ponedeljak|utorak|sreda|četvrtak|petak|subota|nedelja)(?:,\s*\b(?:ponedeljak|utorak|sreda|četvrtak|petak|subota|nedelja))*\b$"
         return bool(re.match(pattern, projection_days))
 
     @staticmethod

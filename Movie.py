@@ -1,7 +1,3 @@
-from DisplayController import DisplayController
-
-display_controller = DisplayController()
-
 
 class Movie:
     def __init__(self, title, genre, duration, director, main_roles, country_of_origin, release_year, description):
@@ -14,5 +10,3 @@ class Movie:
         self.release_year = release_year
         self.description = description
 
-    def display_movie(self):
-        display_controller.display_movie(self)

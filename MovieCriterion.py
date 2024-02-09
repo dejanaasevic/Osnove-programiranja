@@ -16,8 +16,6 @@ class MovieCriterion:
     def valid_movie(self, movie):
         if self.title is not None and self.title.lower() not in movie.title.lower().strip():
             return False
-        if self.genre is not None and self.genre.lower() not in movie.genre.lower().strip():
-            return False
         if self.duration is not None and int(self.duration) != int(movie.duration):
             return False
         if self.country_of_origin is not None and self.country_of_origin.lower() not in movie.country_of_origin.lower().strip():
@@ -46,5 +44,12 @@ class MovieCriterion:
                 found = any(director in m_director for m_director in movie_directors)
                 if not found:
                     return False
+
+        if self.genre is not None:
+            genres = [genre.strip().lower() for genre in self.genre.split()]
+            movie_genre = [m_genre.strip().lower() for m_genre in movie.genre.split()]
+            found = all(genre in movie_genre for genre in genres)
+            if not found:
+                return False
 
         return True

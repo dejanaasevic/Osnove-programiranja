@@ -36,5 +36,3 @@ class User:
             else:
                 return False
 
-    def display_user(self):
-        display_controller.display_user(self)

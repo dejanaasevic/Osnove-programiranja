@@ -11,20 +11,13 @@ class DisplayController:
     @staticmethod
     def display_genres():
         genres_list = [
-            "akcija", "avantura", "animacija", "komedija", "kriminal", "dokumentarni",
-            "drama", "fantazija", "horor", "misterija", "romansa", "naučna fantastika",
-            "triler", "vestern", "ratni", "biografija", "muzika", "sportski",
-            "superheroj", "porodični", "tinejdžerski"
+             "akcija", "avantura", "animirani", "komedija", "krimi", "dokumentarni", "drama", "fantastika", "horor",
+             "misterija", "romantika", "fantastika", "triler", "vestern", "ratni", "biografski", "muzički",
+             "sportski", "superheroj", "porodični", "teenage"
         ]
         table = tabulate([[genre] for genre in genres_list], headers=["žanr"], tablefmt="fancy_grid", numalign="center")
         print(table)
 
-    @staticmethod
-    def display_user(user):
-        user_data = [user.username, user.password, user.name, user.surname, user.role]
-        headers = ["korisničko ime", "lozinka", "ime", "prezime", "uloga"]
-        table = tabulate(user_data, headers=headers, tablefmt="fancy_grid", numalign="center")
-        print(table)
 
     @staticmethod
     def display_filtered_projection_term(filtered_list):

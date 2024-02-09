@@ -8,25 +8,25 @@ list_of_projections = movie_projection_controller.list_of_projections
 
 
 def save_movie(movie):
-    with open('movies.txt', 'a') as file:
+    with open('movies.txt', 'a', encoding="utf-8") as file:
         file.write(f"{movie.title}|{movie.genre}|{movie.duration}|{movie.director}|{movie.main_roles}|"
                    f"{movie.country_of_origin}|"f"{movie.release_year}|{movie.description}\n")
 
 
 def update_movie_in_file(status, file_movie, updated_movie):
-    with open('movies.txt', 'r') as file:
+    with open('movies.txt', 'r', encoding='utf-8') as file:
         lines = file.readlines()
-    with open('movies.txt', 'w') as file:
+    with open('movies.txt', 'w', encoding='utf-8') as file:
         for line in lines:
             data = line.strip().split('|')
             if (data[0] == file_movie.title and data[1] == file_movie.genre and
                     data[2] == file_movie.duration and data[3] == file_movie.director
                     and data[4] == file_movie.main_roles and data[5] == file_movie.country_of_origin
-                    and data[6] == file_movie.country_of_origin and data[7] == file_movie.description):
+                    and data[6] == file_movie.release_year and data[7] == file_movie.description):
                 updated_line = "|".join([
                     updated_movie.title, updated_movie.genre, updated_movie.duration,
                     updated_movie.director, updated_movie.main_roles, updated_movie.country_of_origin,
-                    updated_movie.description
+                    updated_movie.release_year, updated_movie.description
                 ]) + "\n"
                 file.write(updated_line)
             else:
@@ -54,9 +54,9 @@ def update_movie_in_file(status, file_movie, updated_movie):
 
 
 def remove_movie_from_file(movie_choice):
-    with open('movies.txt', 'r') as file:
+    with open('movies.txt', 'r', encoding="utf-8") as file:
         lines = file.readlines()
-    with open('movies.txt', 'w') as file:
+    with open('movies.txt', 'w', encoding="utf-8") as file:
         for line in lines:
             movie_info = line.strip().split('|')
             if (movie_info[0] == movie_choice.title and movie_info[1] == movie_choice.genre and
@@ -72,7 +72,7 @@ class MovieController:
         self.list_of_movies = []
 
     def load_movies(self):
-        with open('movies.txt', 'r') as file:
+        with open('movies.txt', 'r', encoding="utf-8") as file:
             for line in file:
                 new_movie = line.strip().split('|')
                 self.list_of_movies.append(Movie(*new_movie))
@@ -99,25 +99,9 @@ class MovieController:
 
     def update_movie(self, file_movie, updated_movie):
         for movie in self.list_of_movies:
-            if (movie.title == file_movie.title and movie.genre == file_movie.genre and
-                    movie.duration == file_movie.duration and movie.director == file_movie.director
-                    and movie.main_roles == file_movie.main_roles and movie.country_of_origin == file_movie.country_of_origin
-                    and movie.release_year == file_movie.country_of_origin and movie.description == file_movie.description):
-
-                status = movie.title != updated_movie.title or int(movie.duration) != int(updated_movie.duration)
-
-                movie.title = updated_movie.title
-                movie.genre = updated_movie.genre
-                movie.duration = updated_movie.duration
-                movie.director = updated_movie.director
-                movie.main_roles = updated_movie.main_roles
-                movie.country_of_origin = updated_movie.country_of_origin
-                movie.release_year = updated_movie.country_of_origin
-                movie.description = updated_movie.description
-                update_movie_in_file(status, file_movie, updated_movie)
-                return True
-            else:
-                return False
+            status = movie.title != updated_movie.title or int(movie.duration) != int(updated_movie.duration)
+            update_movie_in_file(status, file_movie, updated_movie)
+        return True
 
     def remove_movie(self, movie_choice):
         for movie in self.list_of_movies:

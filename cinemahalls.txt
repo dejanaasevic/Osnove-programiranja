@@ -2,5 +2,4 @@ A|10|A,B,C,D,E,F,G,H|None
 B|7|A,B,C,D,E|None
 C|6|A,B,C,D|None
 D|8|A,B,C,D,E,F,G,H,I|None
-E|7|A,B,C,D,E,F,G,H|None
-F|11|A,B,C,D,E,F,G,H,I|None
+E|11|A,B,C,D,E,F,G,H,I|None

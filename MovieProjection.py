@@ -1,7 +1,4 @@
 from datetime import datetime, timedelta
-from DisplayController import DisplayController
-
-display_controller = DisplayController()
 
 
 class MovieProjection:
@@ -18,6 +15,10 @@ class MovieProjection:
     def calculate_new_ending(time, duration):
         start_time = datetime.strptime(time, "%H:%M")
         end_time = start_time + timedelta(minutes=int(duration))
+        if end_time.hour >= 24:
+            end_time = end_time.replace(hour=end_time.hour - 24)
+        elif end_time.hour < 0:
+            end_time = end_time.replace(hour=end_time.hour + 24)
 
         minutes = end_time.minute
         if minutes > 30:
@@ -25,3 +26,4 @@ class MovieProjection:
         elif minutes < 30 and minutes != 0:
             end_time = end_time.replace(minute=30)
         return end_time.strftime("%H:%M")
+

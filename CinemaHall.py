@@ -1,7 +1,3 @@
-from DisplayController import DisplayController
-
-display_controller = DisplayController()
-
 
 class CinemaHall:
     def __init__(self, hall_code, num_rows, seat_labels, hall_name=None):
@@ -55,5 +51,3 @@ class CinemaHall:
                     row_display += seat_label + " "
             print(row_display.strip())
 
-    def display_cinema_hall(self):
-        display_controller.display_cinema_hall(self)
