@@ -1,4 +1,3 @@
-1111|A|18:00|20:30|ponedeljak|Iron Man 2|430.00
 2409|A|18:30|21:00|utorak|Black Widow|450.00
 1010|A|19:00|21:30|sreda|Thor: Ragnarok|450.00
 2020|A|17:00|19:30|četvrtak|Captain America: The Winter Soldier|410.00

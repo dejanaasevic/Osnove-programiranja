@@ -34,9 +34,6 @@ def remove_ticket_from_file(ticket):
 def update_ticket_in_file(file_ticket, updated_ticket):
     with open('tickets.txt', 'r') as file:
         lines = file.readlines()
-        print(file_ticket.owner, file_ticket.seat_label, file_ticket.projection_term.code)
-        print(updated_ticket.owner, updated_ticket.seat_label, updated_ticket.projection_term.code)
-    print("EVO ME OVDE")
     with open('tickets.txt', 'w') as file:
         for line in lines:
             ticket_info = line.strip().split('|')

@@ -11,6 +11,13 @@ cinema_controller.load_cinema_halls()
 list_of_halls = cinema_controller.list_of_cinema_halls
 
 
+def get_index_from_code(code):
+    code = code.upper()
+    index = 0
+    for i, char in enumerate(code):
+        index += (ord(char) - 65) * (26 ** (len(code) - i - 1))
+    return index
+
 def save_projection(movie_projection_term):
     with open('projectionterms.txt', 'a') as file:
         projection_term_info = f"{movie_projection_term.code}\n"
@@ -20,12 +27,12 @@ def save_projection(movie_projection_term):
 def remove_projection_term_from_file(projection_term):
     with open('projectionterms.txt', 'r') as file:
         lines = file.readlines()
-
     with open('projectionterms.txt', 'w') as file:
         for line in lines:
-            if line == projection_term.code:
-                continue
-            file.write(line)
+            if line.strip().upper() != str(projection_term.code).strip().upper():
+                file.write(line)
+            else:
+                print(f"obrisan termin projekcije: {str(projection_term.code).strip().upper()}")
 
 
 class MovieProjectionTermController:
@@ -43,9 +50,9 @@ class MovieProjectionTermController:
                 date_object = datetime.strptime(date, '%d.%m.%Y.')
                 for i in range(len(list_of_projections)):
                     if list_of_projections[i].projection_code == code[0:4]:
-                        if self.valid_date(list_of_projections[i], date_object):
-                            self.list_of_projection_terms.append(MovieProjectionTerm(list_of_projections[i],
-                                                                                     i, date_object))
+                        index = get_index_from_code(code[4:])
+                        self.list_of_projection_terms.append(MovieProjectionTerm(list_of_projections[i],
+                                                                                 index, date_object))
 
     def search(self, criterion):
         filtered_movies_projection_terms = []
@@ -78,6 +85,8 @@ class MovieProjectionTermController:
                 return False
 
     def remove_projection_terms(self, delete_projection_term_list):
+        if not delete_projection_term_list:
+            return
         for projection_term in delete_projection_term_list:
             self.remove_projection_term(projection_term)
 
@@ -91,7 +100,7 @@ class MovieProjectionTermController:
 
     @staticmethod
     def get_day_of_week(date_item):
-        days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        days_of_week = ["ponedeljak", "utorak", "sreda", "četvrtak", "petak", "subota", "nedelja"]
         day_of_week = date_item.weekday()
         return days_of_week[day_of_week]
 
@@ -113,9 +122,11 @@ class MovieProjectionTermController:
         if index is not None:
             return index
         else:
-            max_index = list_of_projections[0].index
+            max_index = self.list_of_projection_terms[0].index
             for projection_term in self.list_of_projection_terms:
                 if projection_term.index > max_index:
                     max_index = projection_term.index
 
             return max_index + 1
+
+

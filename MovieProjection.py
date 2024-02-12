@@ -13,7 +13,11 @@ class MovieProjection:
 
     @staticmethod
     def calculate_new_ending(time, duration):
-        start_time = datetime.strptime(time, "%H:%M")
+        if str(type(time)) == "<class 'datetime.time'>":
+            start_time = time.strftime("%H:%M")
+        else:
+            start_time = time
+        start_time = datetime.strptime(start_time, "%H:%M")
         end_time = start_time + timedelta(minutes=int(duration))
         if end_time.hour >= 24:
             end_time = end_time.replace(hour=end_time.hour - 24)
@@ -26,4 +30,3 @@ class MovieProjection:
         elif minutes < 30 and minutes != 0:
             end_time = end_time.replace(minute=30)
         return end_time.strftime("%H:%M")
-

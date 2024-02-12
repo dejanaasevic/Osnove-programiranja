@@ -1,6 +1,12 @@
 teajovanovic|Andjela Kumazec|9302AM|14.12.2023.|2A|17.12.2023.|2|420.00
-zeljanaasevic|Jelena Karleusa|5678AB|14.12.2023.|7A|17.12.2023.|2|430.00
-zeljanaasevic|Anamarija Maksimovic|5678AB|19.12.2023.|6A|27.12.2023.|2|430.00
-zeljanaasevic|nikolijabozic|5678AB|14.12.2023.|7E|09.12.2023.|2|430.00
-zeljanaasevic|stasazdravkovic|5678AB|14.12.2023.|7B|17.12.2023.|2|430.00
-nikolapetrovic|nikolijabozic|1234AA|13.12.2023.|1B|09.12.2023.|2|450.00
+maksimvujnic|zeljanaasevic|1311AY|14.02.2024.|5B|10.02.2024.|2|440.00
+maksimvujnic|dejanaasevic|1444AK|18.02.2024.|7A|10.02.2024.|2|410.00
+maksimvujnic|Ana Savic|1234AA|11.12.2023.|1A|10.02.2024.|2|400.00
+urosvasiljevic|Milica Pavlovic|1818AQ|11.02.2024.|2B|10.02.2024.|2|400.00
+urosvasiljevic|goranbozic|2607AP|11.02.2024.|5C|10.02.2024.|2|480.00
+maksimvujnic|Aleksandra Mitrovic|2020AZ|22.02.2024.|1D|10.02.2024.|2|410.00
+nemanjalukic|Valentina Radic|8006BB|23.02.2024.|5A|10.02.2024.|2|400.00
+saradosevic|katicabozic|8006BB|23.02.2024.|5B|10.02.2024.|2|400.00
+verakrsev|nedeljkobozic|2411AR|12.02.2024.|7D|10.02.2024.|2|350.00
+verakrsev|radislavbozic|4444AO|18.02.2024.|4B|10.02.2024.|2|460.00
+verakrsev|radislavbozic|1256AM|23.02.2024.|4A|10.02.2024.|2|470.00

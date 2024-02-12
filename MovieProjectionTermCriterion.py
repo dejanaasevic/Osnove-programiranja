@@ -20,11 +20,10 @@ class MovieProjectionTermCriterion:
             date_object = datetime.strptime(self.date, '%d.%m.%Y.')
             if date_object != projection_term.date:
                 return False
-
-        if self.start_time is not None and self.start_time != projection_term.movie_projection.start_time:
+        if self.start_time is not None and self.start_time != projection_term.movie_projection.start_time.strftime("%H:%M"):
             return False
 
-        if self.end_time is not None and self.end_time != projection_term.movie_projection.end_time:
+        if self.end_time is not None and self.end_time != projection_term.movie_projection.end_time.strftime("%H:%M"):
             return False
 
         return True

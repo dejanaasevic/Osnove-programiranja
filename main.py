@@ -21,7 +21,6 @@ from User import User
 from UserController import UserController
 from ValidationController import ValidationController
 
-
 current_user = None
 
 
@@ -116,6 +115,7 @@ def display_menu_for_registered_salesperson():
         print("12. Direktna prodaja karte")
         print("13. Prodaja rezervisane karte")
         print("14. Izmena karte")
+        print("15. Otkazivanje rezervacije")
         choice = input("Unesite broj opcije: ")
         if choice == "1":
             log_out()
@@ -172,6 +172,7 @@ def display_menu_for_registered_menager():
         print("14. Registracija bioskopske projekcije")
         print("15. Izmena bioskopske projekcije")
         print("16. Brisanje bioskopske projekcije")
+        print("17. Generisanje termina projekcije")
         choice = input("Unesite broj opcije: ")
         if choice == "1":
             log_out()
@@ -205,6 +206,8 @@ def display_menu_for_registered_menager():
             update_projection()
         elif choice == "16":
             remove_projection()
+        elif choice == "17":
+            generate_new_projection_terms()
         else:
             print("Nevažeća opcija. Molimo pokušajte ponovo.")
 
@@ -252,7 +255,6 @@ def display_menu_for_admin():
         registration_new_movie_projection_term()
     else:
         print("Nevažeća opcija. Molimo pokušajte ponovo.")
-
 
 
 def display_available_movies():
@@ -619,10 +621,9 @@ def update_projection():
             print("Za povratak na meni unesite: -1")
             print("1. Sala")
             print("2. Vreme početka")
-            print("3. Vreme kraja")
-            print("4. Dani projekcije")
-            print("5. Film")
-            print("6. Cena")
+            print("3. Dani projekcije")
+            print("4. Film")
+            print("5. Cena")
             choice = input("Unesite opciju: ")
 
             if choice == "-1":
@@ -654,17 +655,20 @@ def update_projection():
                         continue
                     else:
                         projection.start_time = new_start_time
-                        projection.end_time = MovieProjection.calculate_new_ending(projection.start_time,
-                                                                                   projection.movie.duration)
+                        duration = None
+                        for movie in movie_controller.list_of_movies:
+                            if movie.title == projection.movie:
+                                duration = movie.duration
+                        projection.end_time = MovieProjection.calculate_new_ending(projection.start_time, duration)
 
                         if movie_projection_controller.update_projection(projection_copy, projection):
                             print("Uspešno ste izmenili vreme početka.")
                             continue
 
-            if choice == "4":
+            if choice == "3":
+                new_days = input("Unesite nove dane projekcije: ")
                 if new_days == "-1":
                     continue
-                new_days = input("Unesite nove dane projekcije: ")
                 if new_days.strip() != "":
                     if not validation_controller.movie_projection_valid_day_input(new_days):
                         print("Nevažeći unos dana projekcije. Molimo pokušajte ponovo.")
@@ -675,19 +679,23 @@ def update_projection():
                             print("Uspešno ste izmenili cenu.")
                             continue
 
-            if choice == "5":
+            if choice == "4":
                 display_controller.display_movies()
                 print()
-                movie_choice = input("Unesite ID filma")
+                movie_choice = input("Unesite ID filma: ")
                 if movie_choice == "-1":
                     continue
                 if not 1 <= int(movie_choice) <= len(movie_controller.list_of_movies):
                     print("Nevažeći indeks. Molimo pokušajte ponovo.")
                     continue
                 else:
-                    projection.movie = movie_controller.list_of_movies[int(movie_choice) - 1]
-                    projection.end_time = MovieProjection.calculate_new_ending(projection.start_time,
-                                                                               projection.movie.duration)
+                    projection.movie = movie_controller.list_of_movies[int(movie_choice) - 1].title
+                    duration = None
+                    for movie in movie_controller.list_of_movies:
+                        if movie.title == projection.movie:
+                            duration = movie.duration
+                    print(duration)
+                    projection.end_time = MovieProjection.calculate_new_ending(projection.start_time, duration)
                     if movie_projection_controller.update_projection(projection_copy, projection):
                         print("Uspešno ste izmenili cenu.")
                         continue
@@ -695,7 +703,8 @@ def update_projection():
                         print("Film sa datim naslovom nije pronađen. Molimo pokušajte ponovo.")
                         continue
 
-            if choice == "6":
+            if choice == "5":
+                projection_copy
                 new_price = input("Unesite novu cenu: ")
                 if new_price == "-1":
                     continue
@@ -704,6 +713,7 @@ def update_projection():
                         print("Nevažeća cena. Molimo pokušajte ponovo.")
                         continue
                     else:
+                        projection_copy = copy.copy(projection)
                         projection.price = new_price
                         if movie_projection_controller.update_projection(projection_copy, projection):
                             print("Uspešno ste izmenili cenu.")
@@ -724,6 +734,7 @@ def remove_projection():
             delete = True
             projection_choice = movie_projection_controller.list_of_projections[int(choice) - 1]
             for ticket in ticket_controller.list_of_tickets:
+                ticket_date = ticket.projection_term.date.date()
                 if (ticket.projection_term.movie_projection.movie == projection_choice.movie and
                         ticket.projection_term.movie_projection.projection_code == projection_choice.projection_code and
                         ticket.projection_term.movie_projection.hall == projection_choice.hall and
@@ -731,7 +742,7 @@ def remove_projection():
                         ticket.projection_term.movie_projection.end_time == projection_choice.end_time and
                         ticket.projection_term.movie_projection.projection_days == projection_choice.projection_days and
                         ticket.projection_term.movie_projection.ticket_price == projection_choice.ticket_price and
-                        ticket.projection_term.date > datetime.now().date()):
+                        ticket_date > datetime.now().date()):
                     delete = False
                     break
             if delete:
@@ -768,14 +779,14 @@ def generate_new_projection_terms():
     for i in range(7):
         first_date = current_date + timedelta(days=i)
         second_date = first_date + timedelta(days=7)
-        day_in_week = MovieProjectionTermController.get_day_of_week(first_date)
+        day_in_week = movie_projection_term_controller.get_day_of_week(first_date)
         for projection in movie_projection_controller.list_of_projections:
             if day_in_week in projection.projection_days:
-                index = MovieProjectionTermController.generate_index(projection)
+                index = movie_projection_term_controller.generate_index(projection)
                 first_projection_term = MovieProjectionTerm(projection, index, first_date)
                 second_projection_term = MovieProjectionTerm(projection, index, second_date)
-                MovieProjectionTermController.add_projection_term(first_projection_term)
-                MovieProjectionTermController.add_projection_term(second_projection_term)
+                movie_projection_term_controller.add_projection_term(first_projection_term)
+                movie_projection_term_controller.add_projection_term(second_projection_term)
 
 
 def registration_new_cinemahall():
@@ -948,10 +959,7 @@ def update_movie():
                     print("Nevazece ime. Molimo pokusajte ponovo.")
                     continue
                 else:
-                    print(movie_copy.title)
                     movie.title = new_title
-                    print(movie.title)
-                    print(movie_copy.title)
 
                     if movie_controller.update_movie(movie_copy, movie):
                         print("Uspesno ste izmenili ime.")
@@ -966,8 +974,6 @@ def update_movie():
                     print("Nevažeći žanrovi. Molimo pokušajte ponovo.")
                     continue
                 else:
-                    print(movie.genre)
-                    print(new_genres)
                     movie.genre = new_genres
                     if movie_controller.update_movie(movie_copy, movie):
                         print("Uspešno ste izmenili žanrove.")
@@ -1610,11 +1616,11 @@ def search_ticket():
             code_choice = input("Unesite ID koda projekcije: ")
             if code_choice == "-1":
                 continue
-            elif not 0 < int(code_choice) <= len(movie_projection_term_controller.list_of_projection_terms):
+            elif not 0 < int(code_choice) <= len(movie_projection_controller.list_of_projections):
                 print("Nevažeći ID. Molimo pokušajte ponovo.")
                 continue
             else:
-                criteria.code = movie_projection_term_controller.list_of_projection_terms[
+                criteria.code = movie_projection_controller.list_of_projections[
                     int(code_choice) - 1].projection_code
 
         elif choice == "2":
@@ -1628,7 +1634,7 @@ def search_ticket():
                     print("Korisničko ime ne postoji. Molimo pokušajte ponovo.")
                     continue
                 else:
-                    criteria.owner = user_choice
+                    criteria.owner = user_choice[1:]
             else:
                 criteria.owner = user_choice
 
@@ -1919,8 +1925,12 @@ def check_and_cancel_reservations():
 
     for ticket in ticket_controller.list_of_tickets:
         if ticket.status == "1":
-            time_until_projection = ticket.projection_term.start_time - current_time
-            if time_until_projection < timedelta(minutes=30):
+            start_time = ticket.projection_term.movie_projection.start_time
+            current_time = datetime.now().time()
+            delta_hours = start_time.hour - current_time.hour
+            delta_minutes = start_time.minute - current_time.minute
+            time_until_projection = delta_hours * 60 + delta_minutes
+            if time_until_projection < 30:
                 tickets_to_remove.append(ticket)
 
     for ticket in tickets_to_remove:
@@ -1933,6 +1943,7 @@ def direct_sale_ticket_for_salesperson():
     reserve_seats = False
     hall = None
     user = None
+    new_ticket = None
     print("DIREKTNA PRODAJA KARTE ZA PRODAVCA")
     print("__________________________________")
     while True:
@@ -2074,7 +2085,7 @@ def sale_of_reserved_tickets():
             elif projection_date.weekday() in [5, 6]:
                 price += 50
             user_item = user_controller.get_user(owner)
-            if user_item.check_eligibility_for_discount():
+            if user_item is not None and user_item.check_eligibility_for_discount():
                 price = price * 0.9
             new_sold_ticket = SoldTicket(current_user.username, ticket_choice, price)
             sold_tickets_controller.add_sold_ticket(new_sold_ticket)
@@ -2241,7 +2252,8 @@ def change_ticket_information():
                                             current_ticket_copy.owner = current_ticket.owner
                                             update_ticket_in_file(current_ticket_copy, current_ticket)
                                             if current_ticket.status == "2":
-                                                sold_tickets_controller.update_sold_ticket_in_file(current_ticket_copy, current_ticket)
+                                                sold_tickets_controller.update_sold_ticket_in_file(current_ticket_copy,
+                                                                                                   current_ticket)
                             else:
                                 print("Uneli ste nevažeću opciju. Molimo pokušajte ponovo.")
                                 continue
@@ -2261,7 +2273,7 @@ def change_ticket_information():
                             if current_ticket.status == "2":
                                 sold_tickets_controller.update_sold_ticket_in_file(current_ticket_copy, current_ticket)
                     else:
-                        if not validation_controller.user_valid_name(owner_choice):
+                        if not validation_controller.movie_valid_director(owner_choice):
                             print("Nevažeće ime. Molimo pokušajte kasnije.")
                             continue
                         else:
@@ -2312,12 +2324,14 @@ def change_ticket_information():
                                 current_ticket.seat_label = seat_choice
                                 update_ticket_in_file(current_ticket_copy, current_ticket)
                                 if current_ticket.status == "2":
-                                    sold_tickets_controller.update_sold_ticket_in_file(current_ticket_copy, current_ticket)
+                                    sold_tickets_controller.update_sold_ticket_in_file(current_ticket_copy,
+                                                                                       current_ticket)
                         else:
                             continue
             update_ticket_in_file(current_ticket_copy, current_ticket)
             if current_ticket.status == "2":
                 sold_tickets_controller.update_sold_ticket_in_file(current_ticket_copy, current_ticket)
+
 
 def cancellation_of_ticket_for_sellperson():
     print("PONIŠTAVNJE REZERVISANIH/PRODATIH KARATA ZA PRODAVCA")
@@ -2335,7 +2349,9 @@ def cancellation_of_ticket_for_sellperson():
             continue
         else:
             ticket = ticket_controller.list_of_tickets[int(choice) - 1]
-            if ticket_controller.remove_ticket(ticket) and sold_tickets_controller.remove_sold_ticket(ticket):
+            if ticket_controller.remove_ticket(ticket):
+                if ticket.status == "2":
+                    sold_tickets_controller.remove_sold_ticket(ticket)
                 print("Uspešno ste poništili rezervaciju karte.")
                 continue
             else:
@@ -2356,9 +2372,6 @@ def create_report():
         print("6. Ukupna cena prodatih karata za zadati film u svim projekcijama.")
         print("7. Ukupan broj i ukupna cena prodatih karata za izabran dan prodaje i odabranog prodavca.")
         print("8. Ukupan broj i ukupna cena prodatih karata po prodavcima (za svakog prodavca) u poslednjih 30 dana.")
-        print("9. Ukupan broj i ukupna cena prodatih karata za izabran dan (u prethodnoj nedelji) prodaje.")
-        print(
-            "10 .Ukupan broj i ukupna cena prodatih karata za izabran dan (u prethodnoj nedelji) održavanja projekcije.")
         choice = input("Unesi broj opcije: ")
 
         if choice == "-1":
@@ -2491,40 +2504,6 @@ def create_report():
         elif choice == "8":
             report_controller.sold_tickets_for_each_sellperson_in_last_30_days()
 
-        elif choice == "9":
-            print("1. Ponedeljak")
-            print("2. Utorak")
-            print("3. Sreda")
-            print("4. Četvrtak")
-            print("5. Petak")
-            print("6. Subota")
-            print("7. Nedelja")
-            day_choice = input("Unesite opciju: ")
-            if day_choice == "-1":
-                continue
-            elif not (1 <= int(day_choice) <= 7):
-                print("Nevažeći indeks. Molimo pokušajte ponovo.")
-                continue
-            else:
-                report_controller.sold_tickets_by_sale_day_in_previous_week(day_choice)
-
-        elif choice == "10":
-            print("1. Ponedeljak")
-            print("2. Utorak")
-            print("3. Sreda")
-            print("4. Četvrtak")
-            print("5. Petak")
-            print("6. Subota")
-            print("7. Nedelja")
-            day_choice = input("Unesite opciju: ")
-            if day_choice == "-1":
-                continue
-            elif not (1 <= int(day_choice) <= 7):
-                print("Nevažeći indeks. Molimo pokušajte kasnije.")
-                continue
-            else:
-                report_controller.sold_tickets_by_projection_term_day_in_previous_week(day_choice)
-
 
 def main():
     while True:
@@ -2574,5 +2553,5 @@ if __name__ == '__main__':
     report_controller = ReportController()
 
     validation_controller = ValidationController()
-
     main()
+

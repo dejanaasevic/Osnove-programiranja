@@ -11,10 +11,12 @@ list_of_tickets = ticket_controller.list_of_tickets
 
 
 def save_sold_ticket(sold_ticket):
+    price = str(sold_ticket.price) + '0'
+    formatted_date = sold_ticket.ticket.date.strftime('%d.%m.%Y.')
     with open('sold_tickets.txt', 'a') as file:
         file.write(f"{sold_ticket.sellperson}|{sold_ticket.ticket.owner}|{sold_ticket.ticket.projection_term.code}|"
-                   f"{sold_ticket.ticket.seat_label}|{sold_ticket.ticket.date}|{sold_ticket.ticket.status}"
-                   f"|{sold_ticket.price}\n")
+                   f"{sold_ticket.ticket.seat_label}|{formatted_date}|{sold_ticket.ticket.status}"
+                   f"|{price}\n")
 
 
 def remove_sold_ticket_from_file(sold_ticket):
@@ -28,7 +30,7 @@ def remove_sold_ticket_from_file(sold_ticket):
                     sold_ticket_info[1] == sold_ticket.ticket.owner and
                     ticket_code == sold_ticket.ticket.projection_term.code and
                     sold_ticket_info[4] == sold_ticket.ticket.seat_label and
-                    sold_ticket_info[5] == sold_ticket.ticket.date and
+                    sold_ticket_info[5] == sold_ticket.ticket.date.strftime("%d.%m.%Y.") and
                     sold_ticket_info[6] == sold_ticket.ticket.status and
                     sold_ticket_info[7] == sold_ticket.price
             ):
@@ -82,13 +84,13 @@ class SoldTicketController:
                 if (sold_ticket_info[1] == file_ticket.owner and
                         ticket_code == file_ticket.projection_term.code and
                         sold_ticket_info[4] == file_ticket.seat_label and
-                        sold_ticket_info[5] == file_ticket.ticket.date
+                        sold_ticket_info[5] == file_ticket.date
                 ):
                     formatted_date = updated_ticket.date.strftime('%d.%m.%Y.')
                     updated_line = "|".join([
                         sold_ticket_info[0], updated_ticket.owner, updated_ticket.projection_term.code,
                         updated_ticket.seat_label, formatted_date, str(updated_ticket.status), sold_ticket_info[7]
                     ]) + "\n"
-                file.write(updated_line)
-            else:
-                file.write(line)
+                    file.write(updated_line)
+                else:
+                    file.write(line)

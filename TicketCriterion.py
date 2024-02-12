@@ -17,9 +17,9 @@ class TicketCriterion:
             ticket_date_string = ticket.date.strftime('%d.%m.%Y.')
             if ticket_date_string != self.date:
                 return False
-        if self.start_time is not None and self.start_time != ticket.projection_term.movie_projection.start_time:
+        if self.start_time is not None and self.start_time != ticket.projection_term.movie_projection.start_time.strftime("%H:%M"):
             return False
-        if self.end_time is not None and self.end_time != ticket.projection_term.movie_projection.end_time:
+        if self.end_time is not None and self.end_time != ticket.projection_term.movie_projection.end_time.strftime("%H:%M"):
             return False
         if self.status is not None and int(self.status) != int(ticket.status):
             return False

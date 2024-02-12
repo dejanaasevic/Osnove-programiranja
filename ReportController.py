@@ -96,7 +96,7 @@ class ReportController:
     @staticmethod
     def sold_tickets_by_sale_day(day_choice):
         filtered_tickets = []
-        for sold_ticket in list_of_sold_tickets:
+        for sold_ticket in list_of_tickets:
             if is_day_of_week(sold_ticket.ticket.date, int(day_choice)):
                 filtered_tickets.append(sold_ticket)
         if not filtered_tickets:
@@ -155,7 +155,6 @@ class ReportController:
     @staticmethod
     def total_price_for_sold_tickets_by_movie(movie):
         movie_title = movie.title
-        print(movie_title)
         filtered_tickets = []
         for sold_ticket in list_of_sold_tickets:
             print(sold_ticket.ticket.projection_term.movie_projection.movie)
@@ -184,7 +183,7 @@ class ReportController:
     def sold_tickets_by_sale_day_and_sellperson(day_choice, sellperson_choice):
         filtered_tickets = []
         for sold_ticket in list_of_sold_tickets:
-            if is_day_of_week(sold_ticket.ticket.date, int(day_choice) and sellperson_choice == sold_ticket.sellperson):
+            if is_day_of_week(sold_ticket.ticket.date, int(day_choice)) and sellperson_choice[1:] == sold_ticket.sellperson:
                 filtered_tickets.append(sold_ticket)
         if not filtered_tickets:
             print("Nema pronađenih karata. Molimo pokušajte ponovo.")
@@ -254,7 +253,6 @@ class ReportController:
     @staticmethod
     def sold_tickets_by_sale_day_in_previous_week(day_choice):
         date_choice = find_previous_date_by_day(int(day_choice))
-        print(day_choice)
         filtered_tickets = []
         for sold_ticket in list_of_sold_tickets:
             string_date = sold_ticket.ticket.date.strftime("%d.%m.%Y.")
@@ -340,6 +338,9 @@ def find_previous_date_by_day(day_index):
 
 
 def is_day_of_week(date_string, day):
-    date = datetime.strptime(date_string, "%d.%m.%Y.")
+    if isinstance(date_string, str):
+        date = datetime.strptime(date_string, "%d.%m.%Y.")
+    else:
+        date = date_string
     day_of_week = date.weekday()
     return day_of_week == day - 1

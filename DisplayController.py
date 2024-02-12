@@ -95,7 +95,7 @@ class DisplayController:
         print(tabulate(hall_data, headers=headers, tablefmt="fancy_grid", numalign="center"))
 
     @staticmethod
-    def display_reserved_tickets(self):
+    def display_reserved_tickets():
         ticket_controller = TicketController()
         ticket_controller.load_tickets()
         list_of_tickets = ticket_controller.list_of_tickets
@@ -191,7 +191,7 @@ class DisplayController:
         i = 1
         for projection in list_of_projection:
             projection_data.append([
-                i, projection.projection_code, projection.hall, projection.start_time, projection.end_time,
+                i, projection.projection_code, projection.hall.hall_code, projection.start_time, projection.end_time,
                 projection.projection_days, projection.movie, projection.ticket_price])
             i += 1
         headers = ["ID", "kod termina projekcije", "sala", "vreme početka", "vreme završetka", "dani projekcije",
@@ -248,21 +248,20 @@ class DisplayController:
     @staticmethod
     def display_sold_tickets_by_date_and_sellperson(filtered_tickets):
         sold_ticket_data = []
-        i = 1
         for sold_ticket in filtered_tickets:
             string_projection_date = sold_ticket.ticket.projection_term.date.strftime("%d.%m.%Y.")
             string_ticket_date = sold_ticket.ticket.date.strftime("%d.%m.%Y.")
             sold_ticket_data.append([
-                i, sold_ticket.sellperson, sold_ticket.ticket.projection_term.code, sold_ticket.ticket.owner,
+                sold_ticket.sellperson, sold_ticket.ticket.projection_term.code, sold_ticket.ticket.owner,
                 sold_ticket.ticket.projection_term.movie_projection.movie,
                 string_projection_date, sold_ticket.ticket.projection_term.movie_projection.start_time,
                 sold_ticket.ticket.projection_term.movie_projection.end_time, sold_ticket.ticket.seat_label,
-                'rezervisana karta' if sold_ticket.ticket.status == '1' else 'prodata karta', string_ticket_date,
+                string_ticket_date,
                 sold_ticket.price
             ])
         headers = [
-            "ID", "prodavac", "kôd termina", "vlasnik", "film", "datum termina projekcije", "vreme početka",
-            "vreme završetka", "oznaka sedišta", "status", "datum karte", "cena"
+            "prodavac", "kôd termina", "vlasnik", "film", "datum projekcije", "vreme početka",
+            "vreme završetka", "oznaka sedišta", "datum karte", "cena"
 
         ]
         table = tabulate(sold_ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
@@ -271,23 +270,27 @@ class DisplayController:
     @staticmethod
     def display_total_number_and_price_by_sale_day(filtered_tickets):
         total_quantity = len(filtered_tickets)
-        total_price = 0.0
-        for sold_ticket in filtered_tickets:
-            total_price += float(sold_ticket.price)
-        ticket_data = [total_quantity, total_price]
-        headers = ["ukupan broj", "ukupna cena"]
-        table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
+        total_price = sum(float(sold_ticket.price) for sold_ticket in filtered_tickets)
+
+        ticket_data = [
+            ["ukupan broj", total_quantity],
+            ["ukupna cena", total_price]
+        ]
+
+        table = tabulate(ticket_data, headers=["", ""], tablefmt="fancy_grid", numalign="center")
         return table
 
     @staticmethod
     def display_total_number_and_price_by_projection_term_day(filtered_tickets):
         total_quantity = len(filtered_tickets)
-        total_price = 0.0
-        for sold_ticket in filtered_tickets:
-            total_price += float(sold_ticket.price)
-        ticket_data = [total_quantity, total_price]
-        headers = ["ukupan broj", "ukupna cena"]
-        table = tabulate(ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
+        total_price = sum(float(sold_ticket.price) for sold_ticket in filtered_tickets)
+
+        ticket_data = [
+            ["ukupan broj", total_quantity],
+            ["ukupna cena", total_price]
+        ]
+
+        table = tabulate(ticket_data, headers=["", ""], tablefmt="fancy_grid", numalign="center")
         return table
 
     @staticmethod
@@ -309,7 +312,7 @@ class DisplayController:
         for sold_ticket in filtered_tickets:
             total_price += float(sold_ticket.price)
         total_count = len(filtered_tickets)
-        sold_ticket_data.append([sellperson, day, total_count, total_price])
+        sold_ticket_data.append([sellperson, day, str(total_count), str(total_price)])
         headers = ["prodavac", "dan", "ukupan broj", "ukupna cena"]
         table = tabulate(sold_ticket_data, headers=headers, tablefmt="fancy_grid", numalign="center")
         return table
@@ -389,13 +392,13 @@ class DisplayController:
         i = 0
         for projection in movie_projection_controller.list_of_projections:
             i += 1
-            projection_data.append([i, projection.projection_code, projection.hall, projection.start_time,
+            projection_data.append([i, projection.projection_code, projection.hall.hall_code, projection.start_time,
                                     projection.end_time, projection.projection_days, projection.movie,
                                     projection.ticket_price])
         headers = ["ID", "kod projekcije", "kod sale", "vreme početka",
                    "vreme kraja", "dani projekcije", "film", "cena karte"]
         table = tabulate(projection_data, headers=headers, tablefmt="fancy_grid", numalign="center")
-        return table
+        print(table)
 
     @staticmethod
     def display_cinema_hall(hall):
